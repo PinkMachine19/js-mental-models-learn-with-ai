@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class 1 — Python vs JavaScript: Where Do They Fit? — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-02-language-design-map/index.html">next lab &rarr;</a>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Orientation</span>
+      <span class="badge badge-current">Class 1</span>
+    </div>
+    <h1>Python vs JavaScript — First, Where Do They Fit?</h1>
+    <p class="subtitle">
+      Before any JavaScript syntax at all: a map of the programming-language landscape, so
+      Python and JavaScript's similarities and differences have context instead of feeling like
+      an arbitrary pile of rules.
+    </p>
+
+    <div class="build-state">
+      <strong>What this class produces:</strong> no files, no commit — pure orientation. Two tiny
+      runnable experiments, everything else is reading and comparing.
+    </div>
+
+    <div class="alert alert-info">
+      <strong>How to read this class:</strong> map &rarr; intuition &rarr; small experiment &rarr;
+      precise model &rarr; later depth. Several topics below get one or two sentences and an
+      explicit "we'll come back to this" — that's deliberate. This class is landmarks, not depth.
+      <strong>Do not try to memorize the grids.</strong> Skim them once, then move on.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PART 1: THE MAP ===================== -->
+    <h2>1. The 10-Minute Map of Programming Languages</h2>
+    <p>
+      "Programming language" is an enormous category. Before zooming into Python and JavaScript,
+      it helps to see roughly where they sit among languages you may have heard of — not as a
+      strict family tree, but as a rough map.
+    </p>
+
+    <div class="card">
+      <div class="visual-art" style="min-height:220px;">
+        <svg viewBox="0 0 620 260" role="img" aria-labelledby="mapT mapD" style="max-height:240px; width:100%;">
+          <title id="mapT">A rough landscape of programming languages, grouped by general character</title>
+          <desc id="mapD">Four loose clusters: systems languages, managed/VM languages, high-level dynamic languages, and declarative/structural languages, with no strict hierarchy implied between them.</desc>
+
+          <!-- systems cluster -->
+          <rect x="15" y="20" width="190" height="90" rx="8"/>
+          <text x="110" y="14" style="font-size:10px;">closer to the machine</text>
+          <text x="60" y="45">Assembly</text>
+          <text x="60" y="65">C</text>
+          <text x="140" y="65">C++</text>
+          <text x="140" y="90" class="active">Rust</text>
+
+          <!-- managed/VM cluster -->
+          <rect x="230" y="20" width="190" height="90" rx="8"/>
+          <text x="325" y="14" style="font-size:10px;">managed runtimes</text>
+          <text x="270" y="50">C# / .NET</text>
+          <text x="270" y="75">Java / Kotlin (JVM)</text>
+          <text x="380" y="95" class="active">Go</text>
+
+          <!-- dynamic cluster -->
+          <rect x="445" y="20" width="160" height="90" rx="8" class="active"/>
+          <text x="525" y="14" style="font-size:10px;">high-level dynamic</text>
+          <text x="500" y="50" class="active">Python</text>
+          <text x="500" y="75" class="active">JavaScript</text>
+          <text x="500" y="95">TypeScript ↑</text>
+
+          <!-- declarative cluster -->
+          <rect x="15" y="150" width="590" height="80" rx="8"/>
+          <text x="310" y="144" style="font-size:10px;">declarative / structural — not general-purpose in the same sense</text>
+          <text x="90" y="185">SQL</text>
+          <text x="220" y="185">Bash / Shell</text>
+          <text x="370" y="185">HTML</text>
+          <text x="490" y="185">CSS</text>
+
+        </svg>
+      </div>
+      <p style="margin-bottom: 0; font-size: 13px; color: var(--text-muted);">
+        This is a mental map, not an evolutionary tree or a strict hierarchy. Arrows and boxes here
+        mean "loosely near," not "descended from" or "better than." A language can genuinely belong
+        near more than one cluster — Go borrows systems-language concerns while still being
+        garbage-collected and easy to pick up; TypeScript is JavaScript with a type layer bolted on
+        top, not a separate ecosystem.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PART 2: AXES ===================== -->
+    <h2>2. Multiple Axes, Not One Ladder</h2>
+    <p>
+      A single "advanced &rarr; beginner" or "low-level &rarr; high-level" scale can't actually
+      place these languages correctly, because they differ along several <em>independent</em>
+      questions at once. A language can score differently on each one — these are axes, not boxes.
+    </p>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li>How much abstraction does it provide from the machine?</li>
+        <li>Static or dynamic typing?</li>
+        <li>What happens between source code and execution?</li>
+        <li>Native machine code, bytecode, a VM, an interpreter, JIT compilation, or some mix?</li>
+        <li>Who manages memory — the programmer, or the runtime?</li>
+        <li>Does it use garbage collection?</li>
+        <li>What programming paradigms does it support?</li>
+        <li>What environments does it normally run in?</li>
+        <li>What was it primarily designed to make easier?</li>
+        <li>Where is it commonly used today?</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PART 3: LANDSCAPE GRID ===================== -->
+    <h2>3. Language Landscape Grid</h2>
+    <p class="subtitle" style="margin-bottom: 12px;">
+      A map, not a lesson — skim once, keep coming back to it if you want, don't memorize it.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Language</th><th>Abstraction</th><th>Typing</th><th>Execution model</th><th>Memory</th><th>Original motivation</th><th>Common today</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Assembly</td><td>Lowest</td><td>None (raw)</td><td>Direct machine code</td><td>Manual</td><td>Direct hardware control</td><td>Firmware, drivers, tight loops</td></tr>
+          <tr><td>C</td><td>Low</td><td>Static</td><td>Compiled to native</td><td>Manual</td><td>Portable systems programming</td><td>OS kernels, embedded</td></tr>
+          <tr><td>C++</td><td>Low–mid</td><td>Static</td><td>Compiled to native</td><td>Manual (+ RAII)</td><td>Abstraction w/o giving up control</td><td>Games, engines, perf-critical apps</td></tr>
+          <tr><td>Rust</td><td>Low–mid</td><td>Static</td><td>Compiled to native</td><td>Ownership/borrowing, no GC</td><td>Systems control, memory safety</td><td>Systems tools, WASM, infra</td></tr>
+          <tr><td>Go</td><td>Mid</td><td>Static</td><td>Compiled to native</td><td>Garbage collected</td><td>Simplicity at scale</td><td>Cloud services, CLIs</td></tr>
+          <tr><td>C#</td><td>Mid</td><td>Static (+ dynamic escape hatches)</td><td>Compiled to IL, JIT on .NET runtime</td><td>Garbage collected</td><td>Modern managed apps on .NET</td><td>Enterprise, games (Unity), web</td></tr>
+          <tr><td>Java</td><td>Mid</td><td>Static</td><td>Compiled to bytecode, JVM (often JIT)</td><td>Garbage collected</td><td>Portable managed apps ("write once")</td><td>Enterprise backends, Android (via Kotlin/Java)</td></tr>
+          <tr><td>Kotlin</td><td>Mid</td><td>Static</td><td>Compiled to JVM bytecode (or native/JS)</td><td>Garbage collected</td><td>Modern ergonomics on the JVM</td><td>Android, JVM backends</td></tr>
+          <tr><td>Swift</td><td>Mid</td><td>Static</td><td>Compiled to native</td><td>Automatic reference counting</td><td>Modern, safe Apple-platform apps</td><td>iOS/macOS apps</td></tr>
+          <tr><td>Python</td><td>High</td><td>Dynamic</td><td>Compiled to bytecode, run on a VM (CPython)</td><td>Garbage collected</td><td>Readability, productivity</td><td>Scripting, data/ML, backends</td></tr>
+          <tr><td>JavaScript</td><td>High</td><td>Dynamic</td><td>Parsed/interpreted + JIT-compiled by an engine</td><td>Garbage collected</td><td>Scripting behavior in web pages</td><td>Web front/back end, apps, tooling</td></tr>
+          <tr><td>TypeScript</td><td>High</td><td>Static (compiles away)</td><td>Compiles to JavaScript, then runs as JS</td><td>Same as JS (garbage collected)</td><td>Type-checking tooling for JS</td><td>Large JS codebases</td></tr>
+          <tr><td>Bash</td><td>High (for its domain)</td><td>Untyped (mostly strings)</td><td>Interpreted by the shell</td><td>N/A</td><td>Automating shell commands</td><td>Scripts, CI/CD glue</td></tr>
+          <tr><td>SQL</td><td>Declarative</td><td>Static, schema-driven</td><td>Query planned/executed by a database engine</td><td>N/A</td><td>Describing what data you want, not how to get it</td><td>Databases, analytics</td></tr>
+          <tr><td>HTML</td><td>Declarative</td><td>N/A (markup)</td><td>Parsed into a document tree</td><td>N/A</td><td>Describing document structure</td><td>Every web page</td></tr>
+          <tr><td>CSS</td><td>Declarative</td><td>N/A (rules)</td><td>Parsed and applied by a rendering engine</td><td>N/A</td><td>Describing presentation, separate from structure</td><td>Every web page</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="xlang">
+      <div class="xlang-label">Precision note</div>
+      <p>
+        <strong>Loose:</strong> "JavaScript is interpreted, Python is interpreted, C# is compiled" —
+        as if that's three separate, mutually exclusive buckets.
+      </p>
+      <p>
+        <strong>More precise:</strong> a JavaScript engine (V8, SpiderMonkey, JavaScriptCore, and
+        others) typically parses your source, may interpret it initially, and JIT-compiles hot code
+        paths to native machine code while running — several strategies used together, not one.
+        CPython typically compiles Python source to its own bytecode first, then that bytecode runs
+        on the CPython virtual machine. C# compiles to an intermediate language (IL) ahead of time,
+        which the .NET runtime then JIT-compiles. None of these are purely "compiled" or purely
+        "interpreted" in the old, simple sense — "interpreted vs. compiled" is really several
+        related but separate questions (row 3 and row 4 in the axes list above), not one switch.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PART 5: SAME PROBLEM ===================== -->
+    <h2>4. Same Problem, Different Engineering Choices</h2>
+    <p>
+      Every language on this second grid solves "how do I manage memory and get useful work done"
+      — the interesting part is <em>how differently</em> they each choose to do it. None of these
+      choices is objectively "best" — each is a tradeoff suited to different problems.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Dimension</th><th>C++</th><th>Rust</th><th>Go</th><th>C#</th><th>Python</th><th>JavaScript</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Typing</td><td>Static</td><td>Static</td><td>Static</td><td>Static</td><td>Dynamic</td><td>Dynamic</td></tr>
+          <tr><td>Memory</td><td>Manual + RAII</td><td>Ownership/borrowing</td><td>Garbage collected</td><td>Garbage collected</td><td>Garbage collected</td><td>Garbage collected</td></tr>
+          <tr><td>Compile/run</td><td>Compiled to native</td><td>Compiled to native</td><td>Compiled to native</td><td>Compiled to IL, JIT</td><td>Compiled to bytecode, VM</td><td>Parsed + interpreted + JIT by an engine</td></tr>
+          <tr><td>Runtime</td><td>None (thin)</td><td>None (thin)</td><td>Go runtime</td><td>.NET runtime (CLR)</td><td>CPython VM</td><td>JS engine + host (browser/Node)</td></tr>
+          <tr><td>Concurrency</td><td>Threads, manual sync</td><td>Threads, ownership-checked</td><td>Goroutines + channels</td><td>Threads, async/await, Tasks</td><td>Threads (GIL-limited), async/await</td><td>Single-threaded + event loop, async/await</td></tr>
+          <tr><td>Abstraction/control</td><td>High abstraction, still low-level control</td><td>Systems control, safety enforced by compiler</td><td>Simple, intentionally small language surface</td><td>High abstraction, managed</td><td>Very high abstraction</td><td>Very high abstraction</td></tr>
+          <tr><td>Typical strength</td><td>Performance-critical software with fine control</td><td>Performance with memory-safety guarantees</td><td>Simple, scalable network services</td><td>Productive, large managed applications</td><td>Fast to write, read, and iterate on</td><td>The only language that runs natively in every browser</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PART 4: HISTORY (brief) ===================== -->
+    <h2>5. Just Enough History to Explain the Differences</h2>
+    <p class="subtitle" style="margin-bottom: 12px;">
+      Engineering pressures and tradeoffs, not mythology — nobody here was "invented because X was terrible."
+    </p>
+    <div class="card">
+      <p><strong>C</strong> grew up in close relationship with operating systems and hardware — it's still the language most OS kernels are written in.</p>
+      <p><strong>C++</strong> added powerful abstractions (classes, templates, RAII) on top of C while keeping substantial systems-level control.</p>
+      <p><strong>Java</strong> popularized the managed-VM approach for portable applications — compile once, run anywhere a JVM exists.</p>
+      <p><strong>JavaScript</strong> was created to script behavior inside web pages, on a short timeline, then grew far beyond that original browser-only environment.</p>
+      <p><strong>C#</strong> was developed as a modern managed language built around the .NET platform.</p>
+      <p><strong>Python</strong> was optimized heavily for readability and productivity as a general-purpose scripting/programming language.</p>
+      <p><strong>Go</strong> was designed partly in response to complexity encountered building and maintaining large-scale software systems.</p>
+      <p><strong>Rust</strong> was designed to give systems-level control while preventing entire classes of memory-safety bugs at compile time.</p>
+      <p style="margin-bottom: 0;"><strong>TypeScript</strong> added static type analysis and tooling on top of the existing JavaScript ecosystem, without replacing it.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PART 6: ZOOM IN ===================== -->
+    <h2>6. Now Zoom In: Python vs JavaScript</h2>
+    <p>
+      We now have the map. Set most of it aside for the rest of this class — the two dots we
+      actually care about here are Python and JavaScript. Both sit in the same rough
+      neighborhood: high-level, dynamically typed, garbage-collected, general-purpose languages.
+      That similarity is real, and it's exactly why the specific differences below are worth
+      slowing down for — nothing forces two languages in the same neighborhood to make the same
+      design choices.
+    </p>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Variable declaration</h4><span class="compare-label">Syntax</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>age = 30</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>let age = 30;</code></pre></div>
+      </div>
+      <p class="compare-explain">Python binds a name with plain assignment. JavaScript requires a declaration keyword (<code>let</code>, <code>const</code>, or the legacy <code>var</code>) — there's no bare-assignment form for a new binding.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Reassignment vs "constants"</h4><span class="compare-label">Language semantics</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>MAX_SIZE = 10
+# no real enforcement —
+# it's just a naming convention</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>const MAX_SIZE = 10;
+MAX_SIZE = 20; // throws TypeError</code></pre></div>
+      </div>
+      <p class="compare-explain">Python has no language-enforced constant — <code>ALL_CAPS</code> is a human convention only. JavaScript's <code>const</code> is enforced by the engine: reassigning it is a runtime error. (It only locks the binding, not the value's contents — Lab 21 covers what that means for objects.)</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Dynamic typing</h4><span class="compare-label">Type system</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>x = 5
+x = "five"  # fine</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>let x = 5;
+x = "five"; // fine</code></pre></div>
+      </div>
+      <p class="compare-explain">Both are dynamically typed — a variable is just a name currently pointing at a value, and that value's type can change over the variable's lifetime in either language. Lab 03 goes deep on this from the JavaScript side.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>"No value" values</h4><span class="compare-label">JavaScript-specific gotcha</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>x = None</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>let x;        // undefined
+let y = null; // null</code></pre></div>
+      </div>
+      <p class="compare-explain">Python has one deliberate "nothing" value, <code>None</code>. JavaScript splits this into two: <code>undefined</code> (the engine's own default for an unassigned variable) and <code>null</code> (a value you assign yourself, on purpose). Lab 04 covers this split in full, including the undeclared-name case.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Equality</h4><span class="compare-label">JavaScript-specific gotcha</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>1 == "1"  # False</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>1 == "1"  // true
+1 === "1" // false</code></pre></div>
+      </div>
+      <p class="compare-explain">Python's <code>==</code> never silently converts between types like this. JavaScript has two equality operators: <code>==</code> allows type coercion before comparing, <code>===</code> does not. This gets its own dedicated lab later in the curriculum.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Truthiness</h4><span class="compare-label">Language semantics</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>if []:      # falsy
+if "":      # falsy
+if "0":     # truthy (non-empty str)</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>if ([]) {}   // truthy!
+if ("") {}   // falsy
+if ("0") {}  // truthy</code></pre></div>
+      </div>
+      <p class="compare-explain">Both languages coerce values to true/false in a condition, but the falsy list differs: Python treats an empty list/dict/tuple as falsy; JavaScript treats <em>every</em> object — including an empty array <code>[]</code> — as truthy. Only a specific short list of primitive values is falsy in JS.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Blocks: indentation vs braces</h4><span class="compare-label">Syntax</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>if age >= 18:
+    print("adult")</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>if (age >= 18) {
+  console.log("adult");
+}</code></pre></div>
+      </div>
+      <p class="compare-explain">Python uses indentation itself to define a block. JavaScript uses <code>{ }</code> — indentation is just a convention for humans and has no effect on how the code runs.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Functions as values</h4><span class="compare-label">General programming concept</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>def greet():
+    return "hi"
+
+say_hi = greet
+print(say_hi())</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>function greet() {
+  return "hi";
+}
+
+let sayHi = greet;
+console.log(sayHi());</code></pre></div>
+      </div>
+      <p class="compare-explain">"Functions are first-class values" isn't unique to either language — both let you store a function in a variable and call it through that name. JavaScript leans on this even more heavily in everyday code (Lab 11 covers why).</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Lists vs arrays</h4><span class="compare-label">Ecosystem / naming</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>items = [1, 2, 3]
+items.append(4)</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>let items = [1, 2, 3];
+items.push(4);</code></pre></div>
+      </div>
+      <p class="compare-explain">Both are ordered, mutable, dynamically-sized sequences — mostly a naming and method-name difference (<code>.append</code> vs <code>.push</code>) at this level. JavaScript's array is, underneath, a specialized object — a later lab covers exactly what that means for how it stores its contents.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Dictionaries vs objects</h4><span class="compare-label">Language design choice</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>person = {"name": "Ada"}
+print(person["name"])</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>let person = { name: "Ada" };
+console.log(person.name);</code></pre></div>
+      </div>
+      <p class="compare-explain">Python's dictionary and JavaScript's object literal solve the same "named key to value" problem. JavaScript additionally lets you write <code>person.name</code> with a dot, and — unlike a Python dict — every JS object also participates in the prototype chain, a JavaScript-specific mechanism a later lab covers in depth.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Exceptions</h4><span class="compare-label">General programming concept</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>try:
+    risky()
+except ValueError as e:
+    print(e)</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>try {
+  risky();
+} catch (e) {
+  console.log(e.message);
+}</code></pre></div>
+      </div>
+      <p class="compare-explain">Structured exception handling with try/catch is a shared, general concept — the shape is nearly identical. JavaScript doesn't have typed <code>except ValueError</code>-style catches; you check the error's type or message manually inside one <code>catch</code> block. This gets its own dedicated lab later.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Modules</h4><span class="compare-label">Environment</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>from math_utils import add</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>import { add } from "./mathUtils.js";</code></pre></div>
+      </div>
+      <p class="compare-explain">Both give each file its own scope and an explicit way to share specific things across files. JavaScript's module system arrived much later in the language's life than Python's, and is layered on top of an older, less isolated "just one shared global script" model — a later lab covers that history and why it matters.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Classes and object models</h4><span class="compare-label">JavaScript-specific gotcha</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>class Dog:
+    def __init__(self, name):
+        self.name = name</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>class Dog {
+  constructor(name) {
+    this.name = name;
+  }
+}</code></pre></div>
+      </div>
+      <p class="compare-explain">The syntax looks almost identical. Underneath, they are not the same model: Python's class system is class-based from the ground up. JavaScript's <code>class</code> keyword is syntax sitting on top of a fundamentally different mechanism — prototype-based inheritance, where objects link directly to other objects. Several labs later in this curriculum are dedicated entirely to that distinction.</p>
+    </div>
+
+    <div class="xlang">
+      <div class="xlang-label">Precision note</div>
+      <p><strong>Loose:</strong> "JavaScript has classes just like Python or C#."</p>
+      <p style="margin-bottom: 0;"><strong>More precise:</strong> modern JavaScript provides <code>class</code> syntax that reads similarly to Python's or C#'s, but JavaScript's underlying inheritance model is prototype-based, not class-based — a class in JS is a specific, convenient way of setting up a prototype chain, not a separate object system.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Async code (preview only — full topic much later)</h4><span class="compare-label">Runtime / environment</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">Python</div><pre><code>async def fetch():
+    data = await get_data()
+    return data</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>async function fetch() {
+  let data = await getData();
+  return data;
+}</code></pre></div>
+      </div>
+      <p class="compare-explain">Both have <code>async</code>/<code>await</code> syntax, and both rely on an event loop underneath. Python's <code>asyncio</code> event loop is opt-in — most Python code is written without it. JavaScript's single-threaded, event-loop-driven execution is the default, unavoidable execution model for the entire language, in every environment. We'll come back to this in depth much later.</p>
+    </div>
+
+    <div class="xlang">
+      <div class="xlang-label">Precision note</div>
+      <p><strong>Loose:</strong> "JavaScript does asynchronous work."</p>
+      <p style="margin-bottom: 0;"><strong>More precise:</strong> JavaScript itself runs on a single thread with one call stack. Asynchronous <em>work</em> — timers, network requests, file access — is actually carried out by the host environment (the browser or Node.js), not by the JavaScript engine itself. The event loop and task/microtask queues are what decide <em>when</em> your JavaScript callback gets to run again, once that outside work finishes. A whole block of later labs is dedicated to this mechanism specifically.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== TINY EXPERIMENT 1 ===================== -->
+    <h2>7. Tiny Experiment: Truthiness Surprise</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> confirm the truthiness difference from the grid above, directly.</p>
+      <div class="lab-instruction">
+        <p>// Paste this into a JavaScript console (browser or node) — do not run it yet.</p>
+        <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+      </div>
+      <pre><code>if ([]) {
+  console.log("truthy");
+} else {
+  console.log("falsy");
+}</code></pre>
+      <p>If you know Python, what would <code>if []:</code> do there? Predict what this JavaScript version logs, then reveal.</p>
+      <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+      <div class="blur-solution" style="margin-top: 12px;">
+        <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+        <pre aria-hidden="true"><code>Output: truthy
+
+In Python, an empty list is falsy -- if []: skips the block.
+In JavaScript, [] is an object (Lab 03), and every object is
+truthy regardless of what it contains, empty or not. Only a
+short, fixed list of primitive values (0, "", null, undefined,
+NaN, false) is falsy in JavaScript -- "looks empty" is not on
+that list.</code></pre>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== TINY EXPERIMENT 2 ===================== -->
+    <h2>8. Tiny Experiment: Constants Aren't Just a Convention</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> confirm that JavaScript's <code>const</code> is enforced by the engine, unlike Python's naming-only convention.</p>
+      <div class="lab-instruction">
+        <p>// Paste this into a JavaScript console (browser or node) — do not run it yet.</p>
+        <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+      </div>
+      <pre><code>const MAX_SIZE = 10;
+MAX_SIZE = 20;
+console.log("reached the end");</code></pre>
+      <p>If this were Python with <code>MAX_SIZE = 10</code> then <code>MAX_SIZE = 20</code>, both lines would run fine. Predict what happens here, then reveal.</p>
+      <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+      <div class="blur-solution" style="margin-top: 12px;">
+        <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+        <pre aria-hidden="true"><code>Output: Uncaught TypeError: Assignment to constant variable.
+("reached the end" never logs)
+
+JavaScript's const is enforced by the engine itself, not just a
+naming convention -- reassigning it is a runtime error that stops
+the script right there. Python has no equivalent language-level
+protection for a "constant" name.</code></pre>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== FINAL MENTAL MODEL ===================== -->
+    <h2>9. Class 1 Mental Model</h2>
+    <div class="card">
+      <p>
+        Python and JavaScript occupy a similar part of the programming-language landscape: both
+        are high-level, dynamically typed, garbage-collected, general-purpose languages.
+      </p>
+      <p>
+        That does <strong>not</strong> mean JavaScript is "Python with braces." They make
+        different choices about scope, objects, equality, coercion, modules, execution
+        environments, and asynchronous programming. Those differences are what the rest of this
+        course investigates, one small experiment at a time.
+      </p>
+      <p style="margin-bottom: 0;">
+        <strong>Do not memorize the grids above.</strong> The point of this class was orientation
+        — by now you should have a rough mental location for Assembly, C, C++, Rust, Go, Java,
+        C#, Python, JavaScript, and TypeScript. Everything from here zooms in progressively deeper
+        into JavaScript specifically.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a> &nbsp;&middot;&nbsp;
+      <a href="../lab-02-language-design-map/index.html">Class 2 — Every Language Has to Answer These Questions &rarr;</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Labs — JavaScript: Mental Models &amp; Labs</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../labs/index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <h1>Labs</h1>
+    <p class="subtitle">
+      Small, hands-on labs on how JavaScript actually behaves under the hood. Each lab is
+      one mental model, one tiny experiment, one prediction before you run it. Concepts are
+      ordered so nothing is used before it's explained — see <code>CLAUDE.md</code> in the repo
+      for the full prerequisite graph and page-format spec.
+    </p>
+
+    <div class="alert alert-info">
+      Every lab below is tagged with its primary landmark from
+      <a href="lab-02-language-design-map/index.html">Class 2's recurring-concerns map</a> — the
+      same small set of questions every programming language has to answer somehow.
+    </div>
+
+    <h2>Orientation</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Class</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Class 1</td><td><a href="lab-01-python-vs-javascript-landscape/index.html">Python vs JavaScript — First, Where Do They Fit?</a></td><td><span class="concern-chip">— orientation —</span></td><td><span class="badge badge-current">Available</span></td></tr>
+          <tr><td>Class 2</td><td><a href="lab-02-language-design-map/index.html">Every Language Has to Answer These Questions</a></td><td><span class="concern-chip">— orientation —</span></td><td><span class="badge badge-current">Available</span></td></tr>
+          <tr><td>Bonus</td><td><a href="lab-00-csharp-vs-javascript/index.html">A Managed Language vs. A Script-Born Language <em>(C# vs JavaScript)</em></a></td><td><span class="concern-chip">— personal supplement —</span></td><td><span class="badge badge-current">Available</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="subtitle" style="margin-top: -12px;">
+      The bonus class isn't part of the main numbered sequence — it's a standalone C#-background
+      supplement, skippable if you're following the main Python-scaffolded path.
+    </p>
+
+    <h2>Foundation — Execution Model &amp; Scope</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Lab</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>03</td><td><a href="lab-03-values-types-typeof/index.html">Values, Types &amp; typeof</a></td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types</span></td><td><span class="badge badge-current">Available</span></td></tr>
+          <tr><td>04</td><td><a href="lab-04-undefined-null-undeclared/index.html">undefined, null &amp; Undeclared Identifiers</a></td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types</span></td><td><span class="badge badge-current">Available</span></td></tr>
+          <tr><td>05</td><td><a href="lab-05-execution-context-call-stack/index.html">Execution Context &amp; the Call Stack</a></td><td><span class="concern-chip"><span class="concern-glyph">▶</span>Execution</span></td><td><span class="badge badge-current">Available</span></td></tr>
+          <tr><td>06</td><td><a href="lab-06-creation-vs-execution-phase/index.html">Creation Phase vs Execution Phase (Hoisting)</a></td><td><span class="concern-chip"><span class="concern-glyph">▶</span>Execution</span></td><td><span class="badge badge-current">Available</span></td></tr>
+          <tr><td>07</td><td><a href="lab-07-var-let-const-tdz/index.html">var, let, const &amp; the Temporal Dead Zone</a></td><td><span class="concern-chip"><span class="concern-glyph">◎</span>Names &amp; Scope</span></td><td><span class="badge badge-current">Available</span></td></tr>
+          <tr><td>08</td><td>The Global Object &amp; Global Execution Context</td><td><span class="concern-chip"><span class="concern-glyph">▶</span>Execution</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>09</td><td>Lexical Environment &amp; the Scope Chain</td><td><span class="concern-chip"><span class="concern-glyph">◎</span>Names &amp; Scope</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>10</td><td>Single-Threaded, Synchronous Execution</td><td><span class="concern-chip"><span class="concern-glyph">▶</span>Execution</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Functions as a First-Class Concept</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Lab</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>11</td><td>Functions Are Objects</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>12</td><td>Function Declarations vs Function Expressions</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>13</td><td>IIFEs</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>14</td><td>Closures</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions + <span class="concern-glyph">◎</span>Scope</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>15</td><td>Closures in Practice: Factories, Currying, Memoization</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>16</td><td>Callbacks</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>17</td><td>Default, Rest &amp; Destructured Parameters</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>The Object Model</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Lab</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>18</td><td>'this': Method Invocation &amp; Losing 'this'</td><td><span class="concern-chip"><span class="concern-glyph">▶</span>Execution + <span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>19</td><td>call, apply, and bind</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>20</td><td>Arrow Functions &amp; Lexical 'this'</td><td><span class="concern-chip"><span class="concern-glyph">ƒ</span>Functions + <span class="concern-glyph">◎</span>Scope</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>21</td><td>By Value vs By Reference</td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>22</td><td>Object Creation, Property Lookup, Enumeration &amp; Deletion</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data &amp; Objects</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>23</td><td>Object Shorthand, Computed Keys &amp; Getters/Setters</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data &amp; Objects</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>24</td><td>Optional Chaining, Nullish Coalescing &amp; Logical Assignment</td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>25</td><td>Prototypes &amp; the Prototype Chain</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data, Objects &amp; Reuse</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>26</td><td>Object.create &amp; Pure Prototypal Inheritance</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data, Objects &amp; Reuse</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>27</td><td>Constructors and 'new'</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data, Objects &amp; Reuse</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>28</td><td>[[Prototype]] vs .prototype vs constructor</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data, Objects &amp; Reuse</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>29</td><td>ES6 Classes: constructor, Instances &amp; Instance Methods</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data, Objects &amp; Reuse</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>30</td><td>Classes: extends, super, static &amp; #private fields</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data, Objects &amp; Reuse</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Values &amp; Comparison</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Lab</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>31</td><td>Coercion</td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>32</td><td>Equality: == vs ===</td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>33</td><td>Truthy, Falsy &amp; Existence Checks</td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types + <span class="concern-glyph">↪</span>Control Flow</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>34</td><td>Numeric Precision &amp; Special Values <em>(NaN, -0, float error)</em></td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>35</td><td>JSON: The Object/Text Boundary</td><td><span class="concern-chip"><span class="concern-glyph">◇</span>Values &amp; Types + <span class="concern-glyph">▦</span>Data &amp; Objects</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Collections</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Lab</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>36</td><td>Arrays as Objects &amp; length Behavior</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data &amp; Objects</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>37</td><td>Map &amp; Set: Why Dedicated Collections Exist</td><td><span class="concern-chip"><span class="concern-glyph">▦</span>Data &amp; Objects</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>38</td><td>WeakMap, WeakSet &amp; Garbage Collection</td><td><span class="concern-chip"><span class="concern-glyph">⌛</span>Memory &amp; Lifetime</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>39</td><td>Iterable/Iterator Protocol &amp; for...of</td><td><span class="concern-chip"><span class="concern-glyph">↪</span>Control Flow</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>40</td><td>Generators: function* and yield</td><td><span class="concern-chip"><span class="concern-glyph">↪</span>Control Flow + <span class="concern-glyph">ƒ</span>Functions</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Errors</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Lab</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>41</td><td>throw, try/catch/finally &amp; Stack Unwinding</td><td><span class="concern-chip"><span class="concern-glyph">!</span>Errors &amp; Failure</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>42</td><td>Custom Error Classes (extends Error)</td><td><span class="concern-chip"><span class="concern-glyph">!</span>Errors &amp; Failure + <span class="concern-glyph">▦</span>Data &amp; Objects</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Asynchronous JavaScript</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Lab</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>43</td><td>The Event Loop: Stack, Host Environment &amp; Task Queue</td><td><span class="concern-chip"><span class="concern-glyph">⏱</span>Async + <span class="concern-glyph">▶</span>Execution</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>44</td><td>Microtasks vs Macrotasks</td><td><span class="concern-chip"><span class="concern-glyph">⏱</span>Async</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>45</td><td>Promises: States, .then/.catch/.finally, Chaining</td><td><span class="concern-chip"><span class="concern-glyph">⏱</span>Async + <span class="concern-glyph">!</span>Errors</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+          <tr><td>46</td><td>async/await, Sequential vs Concurrent, Promise.all</td><td><span class="concern-chip"><span class="concern-glyph">⏱</span>Async</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Organization</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Lab</th><th>Landmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>47</td><td>Modules: Module Scope, export/import, Dynamic import() &amp; Top-Level await</td><td><span class="concern-chip"><span class="concern-glyph">▣</span>Modules + <span class="concern-glyph">◎</span>Scope</span></td><td><span class="badge badge-locked">Not written</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

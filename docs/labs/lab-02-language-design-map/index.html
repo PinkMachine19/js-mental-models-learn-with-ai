@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class 2 — Every Language Has to Answer These Questions — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-01-python-vs-javascript-landscape/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-03-values-types-typeof/index.html">next lab &rarr;</a>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Orientation</span>
+      <span class="badge badge-current">Class 2</span>
+    </div>
+    <h1>Every Language Has to Answer These Questions</h1>
+    <p class="subtitle">
+      A small, finite list of problems every programming language has to solve somehow.
+      JavaScript's specific answers are what the rest of this course investigates, one at a time.
+    </p>
+
+    <div class="build-state">
+      <strong>What this class produces:</strong> no files, no commit — an index, not a lecture.
+      Ten landmarks, one line each. Nothing here is explained in full yet.
+    </div>
+
+    <div class="alert alert-info">
+      This page is a map you'll come back to, not something to memorize now. Every lab from here
+      on opens with one of these ten badges, so you always know which recurring problem that
+      lab's experiment is actually about.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>The Recurring Problem</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Different languages keep running into the same handful of design problems: how to
+        represent a value, how to name things, how to package computation, how to structure data,
+        how to fail safely, how to wait on things, how source becomes execution. Each language
+        picks its own answers. This course's real subject isn't "JavaScript syntax" — it's
+        "given this recurring problem, what did JavaScript choose, and what follows from that
+        choice?"
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>The Ten Landmarks</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      One glyph, one question, one tiny cross-language pointer each. That's the whole page.
+    </p>
+
+    <div class="concern-grid">
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">◇</div>
+        <div class="concern-card-index">1 of 10</div>
+        <h3>VALUES &amp; TYPES</h3>
+        <p class="concern-card-question">"What kinds of information can this language represent, and how does it tell them apart?"</p>
+        <p class="concern-card-note">Python has an answer. C# has an answer. Rust has an answer. JavaScript has an answer — investigated starting next lab.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">◎</div>
+        <div class="concern-card-index">2 of 10</div>
+        <h3>NAMES &amp; SCOPE</h3>
+        <p class="concern-card-question">"If I write <code>customer</code>, where does the language look for that name?"</p>
+        <p class="concern-card-note">Every language needs rules for name resolution. JavaScript's rules have a few sharp edges Python doesn't.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">↪</div>
+        <div class="concern-card-index">3 of 10</div>
+        <h3>CONTROL FLOW</h3>
+        <p class="concern-card-question">"How does the language express a decision, a repeat, or 'do this instead of that'?"</p>
+        <p class="concern-card-note">Familiar territory from Python — the differences here are mostly syntax, with a few real exceptions later on.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">ƒ</div>
+        <div class="concern-card-index">4 of 10</div>
+        <h3>FUNCTIONS &amp; ABSTRACTION</h3>
+        <p class="concern-card-question">"How do I package up computation, name it, and reuse it — or pass it around like any other value?"</p>
+        <p class="concern-card-note">Both languages treat functions as values. JavaScript leans on that harder than most code you'll have written in Python.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">▦</div>
+        <div class="concern-card-index">5 of 10</div>
+        <h3>DATA, OBJECTS &amp; REUSE</h3>
+        <p class="concern-card-question">"How do I group related data and behavior together, and how does one 'kind of thing' share behavior with another?"</p>
+        <p class="concern-card-note">Python's classes are class-based end to end. JavaScript's object model is built on something else entirely underneath.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">⌛</div>
+        <div class="concern-card-index">6 of 10</div>
+        <h3>MEMORY &amp; LIFETIME</h3>
+        <p class="concern-card-question">"How long does a value live, and who's responsible for reclaiming it when it's done?"</p>
+        <p class="concern-card-note">C++ hands this to you directly. Rust checks it at compile time. Python, C#, Go, and JavaScript all automate it — but not identically.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">!</div>
+        <div class="concern-card-index">7 of 10</div>
+        <h3>ERRORS &amp; FAILURE</h3>
+        <p class="concern-card-question">"When something goes wrong, how does the language represent that, and how does the failure travel?"</p>
+        <p class="concern-card-note">Both languages use try/catch-shaped structured exceptions. The details of what gets thrown, and when, differ.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">▣</div>
+        <div class="concern-card-index">8 of 10</div>
+        <h3>MODULES &amp; ORGANIZATION</h3>
+        <p class="concern-card-question">"How do I split a large program into separate files that can share specific things, deliberately?"</p>
+        <p class="concern-card-note">Python has had this from early on. JavaScript's answer arrived much later in the language's life, on top of an older, less isolated model.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">⏱</div>
+        <div class="concern-card-index">9 of 10</div>
+        <h3>ASYNCHRONY &amp; CONCURRENCY</h3>
+        <p class="concern-card-question">"How does the program deal with waiting on something, without freezing everything else?"</p>
+        <p class="concern-card-note">Python's asyncio is opt-in. JavaScript's single-threaded, event-loop-driven model is the default for the entire language, everywhere it runs.</p>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-card-glyph">▶</div>
+        <div class="concern-card-index">10 of 10</div>
+        <h3>EXECUTION</h3>
+        <p class="concern-card-question">"How does source code actually become running computation, step by step?"</p>
+        <p class="concern-card-note">Every language has some version of a call stack and an execution model. JavaScript's specific version is the very next lab.</p>
+      </div>
+
+    </div>
+
+    <div class="xlang">
+      <div class="xlang-label">Why ten, not eleven or six</div>
+      <p style="margin-bottom: 0;">
+        An earlier draft of this map kept "data/objects" and "reuse/polymorphism" as two separate
+        landmarks. In practice, every lab in this curriculum that deals with one deals with the
+        other at the same time — JavaScript's prototype chain answers both "how do I structure an
+        object" and "how does one object share behavior with another" simultaneously. Merging them
+        produced a cleaner set of landmarks without losing anything the course actually teaches.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>How the Badges Work From Here</h2>
+    <div class="card">
+      <p>Every lab from now on opens with a badge like this one:</p>
+      <div class="concern-badge">
+        <div class="concern-glyph">ƒ</div>
+        <div class="concern-text">
+          <span class="concern-name">FUNCTIONS &amp; ABSTRACTION</span>
+          <span class="concern-index">4 of 10</span>
+        </div>
+      </div>
+      <p>
+        That's the lab's <strong>primary</strong> landmark — usually just one. Occasionally a lab
+        sits at the intersection of two, like closures:
+      </p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="concern-badge">
+          <div class="concern-glyph">ƒ</div>
+          <div class="concern-text">
+            <span class="concern-name">FUNCTIONS &amp; ABSTRACTION</span>
+            <span class="concern-index">4 of 10</span>
+          </div>
+        </div>
+        <div class="concern-badge secondary">
+          <div class="concern-glyph">◎</div>
+          <div class="concern-text">
+            <span class="concern-name">NAMES &amp; SCOPE</span>
+            <span class="concern-index">2 of 10</span>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top: 12px; margin-bottom: 0;">
+        "Closures sit at the intersection of functions and lexical scope." One short sentence,
+        then straight into the lab — not a full re-explanation of the map every time.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>What This Is Building Toward</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        By the end of this course, seeing a brand-new language should make you start asking: how
+        does <em>this</em> one handle types? Scope? Functions? Objects? Memory? Failure? Async?
+        Execution? We're teaching JavaScript specifically — but underneath that, we're teaching
+        you to recognize the ten questions every language keeps answering, so JavaScript's answers
+        stop looking arbitrary and start looking like <em>choices</em>.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a> &nbsp;&middot;&nbsp;
+      <a href="../lab-03-values-types-typeof/index.html">Lab 03 — Values, Types &amp; typeof &rarr;</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>

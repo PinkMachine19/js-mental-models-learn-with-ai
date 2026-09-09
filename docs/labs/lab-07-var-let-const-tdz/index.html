@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 07 — var, let, const &amp; the Temporal Dead Zone — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-06-creation-vs-execution-phase/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; next lab &rarr; <em>(Lab 08 — not written yet)</em>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Foundation</span>
+      <span class="badge badge-current">Lab 07</span>
+    </div>
+    <h1>var, let, const &amp; the Temporal Dead Zone</h1>
+    <p class="subtitle">
+      <code>let</code> and <code>const</code> go through the same two-phase registration as
+      <code>var</code> — they just come out the other side in a very different, much stricter state.
+    </p>
+
+    <div class="build-state">
+      <strong>What this lab produces:</strong> no files, no commit — a pure concept lab. You'll run
+      one short snippet in a console or with <code>node</code>.
+    </div>
+
+    <div class="concept-type">Concept type: <strong>Common Concept, JavaScript-Specific Rules</strong></div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="concern-badge">
+        <div class="concern-glyph">◎</div>
+        <div class="concern-text">
+          <span class="concern-name">NAMES &amp; SCOPE</span>
+          <span class="concern-index">2 of 10</span>
+        </div>
+      </div>
+      <div class="concern-badge secondary">
+        <div class="concern-glyph">▶</div>
+        <div class="concern-text">
+          <span class="concern-name">EXECUTION</span>
+          <span class="concern-index">10 of 10</span>
+        </div>
+      </div>
+    </div>
+    <p class="subtitle" style="margin-top: 10px;">
+      Every language needs rules for where a name is visible. JavaScript has three different
+      declaration forms with three different answers.
+    </p>
+
+    <!-- ===================== MENTAL MODELS (SVG) ===================== -->
+    <h2>Mental Models</h2>
+    <div class="visual-grid">
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v1t v1d">
+            <title id="v1t">var registers open, let/const register locked</title>
+            <desc id="v1d">Two boxes from the creation phase: one open and readable, one behind a padlock.</desc>
+            <rect x="15" y="30" width="65" height="45" rx="4"/>
+            <text x="47" y="56">undefined</text>
+            <text x="47" y="86">var</text>
+            <rect x="100" y="30" width="65" height="45" rx="4" class="active"/>
+            <text x="132" y="58" class="active">🔒</text>
+            <text x="132" y="86" class="active">let / const</text>
+          </svg>
+        </div>
+        <h3>Registered Open vs Registered Locked</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Both get a slot in the creation phase. <code>var</code>'s slot is immediately readable; <code>let</code>/<code>const</code>'s slot is locked until its own declaration line runs.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v2t v2d">
+            <title id="v2t">The Temporal Dead Zone is a span of time, not a place in the code</title>
+            <desc id="v2d">A timeline from the start of a block to a declaration line, marked as a dead zone, then open after.</desc>
+            <path d="M10 60 H170"/>
+            <rect x="10" y="45" width="90" height="30" class="active"/>
+            <text x="55" y="64" class="active">TDZ</text>
+            <text x="135" y="64">readable</text>
+            <path d="M100 40 V80"/>
+            <text x="100" y="30">declaration line</text>
+          </svg>
+        </div>
+        <h3>The TDZ Is a Span of Time</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>From the start of the block until its own declaration line executes, a <code>let</code>/<code>const</code> name exists but touching it throws.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v3t v3d">
+            <title id="v3t">var escapes a block, let stays contained</title>
+            <desc id="v3d">An outer box representing a function, with an inner box representing an if-block; var crosses the inner boundary, let stays inside it.</desc>
+            <rect x="10" y="10" width="160" height="100" rx="6"/>
+            <rect x="30" y="35" width="80" height="50" rx="4" class="active"/>
+            <text x="70" y="58" class="active">if-block</text>
+            <text x="70" y="74" class="active">let x</text>
+            <path d="M110 60 H150"/>
+            <text x="145" y="52">var y</text>
+            <text x="145" y="95">escapes to here</text>
+          </svg>
+        </div>
+        <h3>Block Scope vs Function Scope</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p><code>let</code>/<code>const</code> stay contained to the block they're declared in. <code>var</code> ignores block boundaries and belongs to the whole enclosing function (or the global scope).</p></div>
+      </div>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PRE-LAB QUIZ ===================== -->
+    <h2>Pre-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Answer from intuition first.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">You read a let-declared variable on the line before its own declaration, in the same block. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-pre-0" value="0"> It logs <code>undefined</code>, same as <code>var</code></label>
+            <label><input type="radio" name="lab07-pre-0" value="1"> It throws a <code>ReferenceError</code></label>
+            <label><input type="radio" name="lab07-pre-0" value="2"> It logs the value it's assigned later</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="let is registered but locked (the Temporal Dead Zone) until its own declaration line runs — touching it early throws, it doesn't quietly return undefined." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">A var is declared inside an if-block. Can it be read from outside that if-block, but still inside the same function?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-pre-1" value="0"> Yes</label>
+            <label><input type="radio" name="lab07-pre-1" value="1"> No, it's contained to the if-block</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="var ignores block boundaries entirely — it belongs to the nearest enclosing function (or global scope)." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">Same question, but with a let declared inside that if-block instead. Readable from outside it?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-pre-2" value="0"> Yes</label>
+            <label><input type="radio" name="lab07-pre-2" value="1"> No, it's contained to the if-block</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="let is genuinely block-scoped — it does not exist at all outside the block it's declared in." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== CONCEPT ===================== -->
+    <h2>The Concept</h2>
+
+    <article class="concept-part">
+      <h3>Block-scoped variables aren't a JavaScript invention — the TDZ is</h3>
+      <p>
+        Most languages have some notion of a variable being scoped to a smaller block than a whole
+        function. What's specific to JavaScript is the <strong>Temporal Dead Zone</strong>: a
+        deliberately strict, loud-failure zone that <code>let</code>/<code>const</code> sit in
+        between being registered and being declared.
+      </p>
+      <div class="xlang">
+        <div class="xlang-label">Cross-language note</div>
+        <p><strong>Common concept:</strong> variables scoped to a block.</p>
+        <p><strong>Python:</strong> has no block scope at all — a variable assigned inside an
+        <code>if</code> or <code>for</code> is visible in the whole enclosing function afterward,
+        closer to how <code>var</code> behaves than how <code>let</code> does.</p>
+        <p><strong>JavaScript:</strong> <code>let</code>/<code>const</code> are genuinely trapped
+        inside the block (third diagram above) — a behavior Python simply doesn't have an
+        equivalent for.</p>
+      </div>
+    </article>
+
+    <article class="concept-part">
+      <h3>Same creation phase, different starting state</h3>
+      <p>
+        Building on Lab 06: <code>let</code> and <code>const</code> are registered during the
+        creation phase too — the name exists from the very start of its block. But instead of
+        starting as <code>undefined</code> like <code>var</code>, it starts <strong>uninitialized</strong>,
+        in the Temporal Dead Zone. Touching it before its own declaration line runs throws
+        <code>ReferenceError: Cannot access '...' before initialization</code> — a deliberately
+        loud failure instead of a silent <code>undefined</code>.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Scope: function-wide vs block-contained</h3>
+      <p>
+        The second difference is scope shape. <code>var</code> belongs to the nearest enclosing
+        function (or the global scope if there is none) — it ignores <code>if</code>/<code>for</code>/
+        other block boundaries entirely. <code>let</code> and <code>const</code> are genuinely
+        <strong>block-scoped</strong>: they exist only inside the <code>{ }</code> they were
+        declared in.
+      </p>
+    </article>
+
+    <hr class="section-divider">
+
+    <!-- ===================== LAB ===================== -->
+    <h2>Lab</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> trigger the TDZ directly, and see block scope contain a <code>let</code> while a <code>var</code> escapes.</p>
+      <p style="margin-bottom: 0;"><strong>You'll need:</strong> a browser console or <code>node</code> — no project, no files.</p>
+    </div>
+
+    <div data-step-checkboxes>
+      <article class="card lab-unit">
+        <h3>Lab 1 of 1 — Trigger the TDZ and test block scope</h3>
+
+        <h4>Task</h4>
+        <p>Read a <code>let</code> early (inside a try/catch), then test whether a <code>var</code> and a <code>let</code> each escape an <code>if</code>-block.</p>
+
+        <h4>Instructions</h4>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 1 complete">
+            <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 1/4</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>try {
+  console.log(favoriteColor);
+} catch (err) {
+  console.log("threw:", err.message);
+}
+
+let favoriteColor = "teal";
+console.log("after declaration:", favoriteColor);</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've predicted what the try block logs, before running it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 2 complete">
+            <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 2/4</div>
+          <div class="step-body">
+            <p>Predict what the <code>catch</code> block logs, then reveal.</p>
+            <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>threw: Cannot access 'favoriteColor' before initialization
+after declaration: teal
+
+What you wrote: a read of favoriteColor before its own declaration
+line, deliberately wrapped in try/catch to observe the failure
+without stopping the script.
+
+What the engine effectively does: favoriteColor was registered
+during the creation phase, but starts in the Temporal Dead Zone --
+uninitialized. Reading it there is treated as an error. Once
+execution reaches "let favoriteColor = ...", the TDZ ends for that
+name and it becomes a normal, readable variable.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've run the snippet yourself and it matches the revealed output.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 3 complete">
+            <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 3/4</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Start a fresh snippet. Type it from these comments, don't paste finished code.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Write: if (true) { ... } as a block.
+// Inside the block, declare "var partySize = 4;"
+// and also declare "let guestListLength = 4;".
+
+// After the closing brace of the if-block, add two
+// console.log calls: one for partySize, one for
+// guestListLength (wrap the second in its own try/catch).</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> your file has an <code>if</code> block declaring both variables, with both read attempts placed after the block closes.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 4 complete">
+            <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 4/4</div>
+          <div class="step-body">
+            <p>Predict which of the two reads (outside the block) succeeds and which throws. Run it and compare, then answer this comprehension check: is the error you get for <code>guestListLength</code> here the same kind of error as reading it early inside the TDZ, or a different one — and why?</p>
+            <textarea class="predict-box" rows="3" placeholder="Your answer..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px;"></textarea>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== COMPREHENSION CHECKLIST ===================== -->
+    <h2>Comprehension Checklist</h2>
+    <div class="card">
+      <ul class="check-list">
+        <li>I can explain the TDZ as a span of time within a block, not a location in the source code.</li>
+        <li>I know <code>var</code> ignores block boundaries; <code>let</code>/<code>const</code> are genuinely trapped inside them.</li>
+        <li>I can tell apart a TDZ <code>ReferenceError</code> (name exists, not yet initialized) from an undeclared-name <code>ReferenceError</code> (name never exists there at all, from Lab 04).</li>
+      </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== POST-LAB QUIZ ===================== -->
+    <h2>Post-Lab Quiz</h2>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">What state does a let variable start in during the creation phase?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-post-0" value="0"> undefined, same as var</label>
+            <label><input type="radio" name="lab07-post-0" value="1"> Uninitialized — in the Temporal Dead Zone until its own line runs</label>
+            <label><input type="radio" name="lab07-post-0" value="2"> It isn't registered at all until its line runs</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="It is registered early, just in a locked state distinct from var's undefined default." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">A let is declared inside an if-block. Can code after the block's closing brace read it successfully?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-post-1" value="0"> Yes, same as var</label>
+            <label><input type="radio" name="lab07-post-1" value="1"> No — it doesn't exist outside the block at all</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Block scope means the name simply doesn't exist once you're outside its block — a different failure than the TDZ." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">What's the practical difference between var's "silent undefined" and let/const's TDZ error, when something's read too early?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-post-2" value="0"> There is no difference</label>
+            <label><input type="radio" name="lab07-post-2" value="1"> var lets the bug pass silently as undefined; let/const fail loudly and immediately at the exact line</label>
+            <label><input type="radio" name="lab07-post-2" value="2"> let/const are slower to access than var</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="This is the actual practical payoff of the TDZ — catching a class of bugs at the source instead of letting them silently produce undefined." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== REFLECTION ===================== -->
+    <h2>Reflection Questions</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Write your own answer first — the blurred text is one possible answer, not the only correct one.
+    </p>
+
+    <div class="card">
+      <p><strong>1.</strong> Given what you now know, why might modern style guides recommend <code>const</code> by default, <code>let</code> only when reassignment is needed, and <code>var</code> essentially never?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          <code>const</code>/<code>let</code> give you block scope (fewer accidental leaks past an
+          <code>if</code> or <code>for</code>) and a loud TDZ error instead of a silent
+          <code>undefined</code> when something's used too early. <code>var</code>'s looser rules
+          made sense before block scope existed, but now mostly just remove safety nets without
+          adding any capability <code>let</code>/<code>const</code> lack.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>2.</strong> Would you rather debug a silent <code>undefined</code> from <code>var</code>, or a loud TDZ error from <code>let</code>? Why?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          Most developers prefer the loud error — it points directly at the exact line and reason,
+          versus an <code>undefined</code> that might not cause a visible problem until much later
+          in the program, far from where the actual mistake was made.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT BREAKS ===================== -->
+    <h2>What Breaks If This Understanding Is Wrong?</h2>
+    <div class="alert alert-warning">
+      The scope chain (Lab 09) and closures (Lab 14) both depend on knowing exactly which block a
+      variable belongs to — mixing up <code>var</code>'s function-wide scope with
+      <code>let</code>/<code>const</code>'s block scope will make both of those labs' predictions
+      consistently wrong in loops and conditionals.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT WAS LEARNED ===================== -->
+    <h2>What JavaScript Concept Was Learned Today?</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        <code>let</code> and <code>const</code> go through the same creation-phase registration as
+        <code>var</code>, but land in a locked, block-scoped state (the Temporal Dead Zone) instead
+        of an open, function-scoped <code>undefined</code>.
+      </p>
+      <p class="concern-relate" style="margin-bottom: 0;">
+        <strong>Relates to:</strong> ◎ Names &amp; Scope (2 of 10) — three declaration forms,
+        three different answers to "where is this name visible, and when does it become usable."
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>

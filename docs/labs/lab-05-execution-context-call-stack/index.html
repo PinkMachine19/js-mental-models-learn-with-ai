@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 05 — Execution Context &amp; the Call Stack — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-04-undefined-null-undeclared/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-06-creation-vs-execution-phase/index.html">next lab &rarr;</a>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Foundation</span>
+      <span class="badge badge-current">Lab 05</span>
+    </div>
+    <h1>Execution Context &amp; the Call Stack</h1>
+    <p class="subtitle">
+      One function calling another feels instant and simple. Underneath, the engine is managing a
+      strict, orderly stack of paused work. That stack is what this lab makes visible.
+    </p>
+
+    <div class="build-state">
+      <strong>What this lab produces:</strong> no files, no commit — a pure concept lab. You'll run
+      two short snippets in a console or with <code>node</code>.
+    </div>
+
+    <div class="concept-type">Concept type: <strong>Common / Universal Concept</strong></div>
+
+    <div class="concern-badge">
+      <div class="concern-glyph">▶</div>
+      <div class="concern-text">
+        <span class="concern-name">EXECUTION</span>
+        <span class="concern-index">10 of 10</span>
+      </div>
+    </div>
+    <p class="subtitle" style="margin-top: -6px;">
+      Every language needs some model for how source code becomes running computation, step by
+      step. This lab is JavaScript's answer.
+    </p>
+
+    <!-- ===================== MENTAL MODELS (SVG) ===================== -->
+    <h2>Mental Models</h2>
+    <div class="visual-grid">
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v1t v1d">
+            <title id="v1t">A stack of trays, one order per tray</title>
+            <desc id="v1d">Three stacked trays; only the top tray is being worked on.</desc>
+            <rect x="35" y="82" width="110" height="24"/>
+            <rect x="35" y="54" width="110" height="24"/>
+            <rect x="35" y="26" width="110" height="24" class="active"/>
+            <text x="90" y="98">counter</text>
+            <text x="90" y="70">order #1</text>
+            <text x="90" y="42" class="active">order #2</text>
+            <path class="active" d="M158 26 L158 106"/>
+            <text x="168" y="66" transform="rotate(90 168 66)">only top tray is active</text>
+          </svg>
+        </div>
+        <h3>One Active Tray at a Time</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Only the top tray is being worked. Everything below it is real, held, and waiting — not forgotten, not running, just paused.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v2t v2d">
+            <title id="v2t">Contents of one tray</title>
+            <desc id="v2d">A box split into three labeled slots.</desc>
+            <rect x="20" y="15" width="140" height="90" rx="6"/>
+            <rect x="34" y="28" width="112" height="20"/>
+            <rect x="34" y="52" width="112" height="20"/>
+            <rect x="34" y="76" width="112" height="20"/>
+            <text x="90" y="42">this call's own variables</text>
+            <text x="90" y="66">where to resume after</text>
+            <text x="90" y="90">link back to the caller</text>
+          </svg>
+        </div>
+        <h3>What One Tray Holds</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Every call gets a record like this. The engine's name for a tray is an execution context.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v3t v3d">
+            <title id="v3t">New tray added, tray removed when done</title>
+            <desc id="v3d">A hand adds a tray on order, and removes the top tray only once it's finished.</desc>
+            <circle cx="18" cy="60" r="13"/>
+            <text x="18" y="64">new order</text>
+            <path d="M35 60 H66"/>
+            <rect x="72" y="46" width="30" height="16" class="active"/>
+            <rect x="72" y="64" width="30" height="16"/>
+            <path d="M104 60 H136"/>
+            <circle cx="160" cy="60" r="13"/>
+            <text x="160" y="64">order done</text>
+          </svg>
+        </div>
+        <h3>Add on Call, Remove on Return</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A tray only ever leaves the stack from the top, and only once that order is fully done — never before, never out of order.</p></div>
+      </div>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PRE-LAB QUIZ ===================== -->
+    <h2>Pre-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Answer from intuition, before any explanation. A "wrong" answer here just tells you exactly
+      what this lab needs to fix.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">A function calls another function partway through its own code. What happens to the outer function while the inner one is running?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-pre-0" value="0"> It's fully paused, waiting for the inner call to finish</label>
+            <label><input type="radio" name="lab05-pre-0" value="1"> It keeps executing its own remaining lines at the same time</label>
+            <label><input type="radio" name="lab05-pre-0" value="2"> It's discarded and starts over once the inner call returns</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The outer call's context is held on the stack, paused, until the inner one finishes and is removed." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">Can JavaScript be in the middle of two different function calls at the exact same instant?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-pre-1" value="0"> No — there's one call stack, one thing actively running at a time</label>
+            <label><input type="radio" name="lab05-pre-1" value="1"> Yes, if the functions are short enough</label>
+            <label><input type="radio" name="lab05-pre-1" value="2"> Only when one of the calls is inside a loop</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="One stack, one thread, one active context — this holds regardless of how the code is written (Lab 43 revisits this for async code specifically)." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">Guess: what happens if a function keeps calling itself with no condition that ever stops it?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-pre-2" value="0"> It runs forever with no error</label>
+            <label><input type="radio" name="lab05-pre-2" value="1"> It eventually crashes with a stack-related error</label>
+            <label><input type="radio" name="lab05-pre-2" value="2"> The browser tab silently restarts it</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The stack occupies real, finite memory. Calls that never return fill it up and the engine throws RangeError: Maximum call stack size exceeded." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== CONCEPT ===================== -->
+    <h2>The Concept</h2>
+
+    <article class="concept-part">
+      <h3>The call stack itself is not a JavaScript invention</h3>
+      <p>
+        Python, Java, C#, and most mainstream languages/runtimes track active function calls with a
+        call stack too — it's a general programming-language mechanism, not something JavaScript
+        came up with. What's specific to JavaScript is the exact shape of the record it keeps for
+        each call — the <strong>execution context</strong> — and how that record is built. That's
+        the actual subject of this lab.
+      </p>
+      <div class="xlang">
+        <div class="xlang-label">Cross-language note</div>
+        <p><strong>Common concept:</strong> call stack / stack frames.</p>
+        <p><strong>Python:</strong> every Python call pushes a frame too — it's why a
+        <code>RecursionError</code> exists, the same underlying idea tested in Question 3 above.</p>
+        <p><strong>JavaScript:</strong> same idea, one call stack per thread — what's JavaScript-specific
+        is what gets stored in each context, next.</p>
+      </div>
+    </article>
+
+    <article class="concept-part">
+      <h3>What an execution context actually is</h3>
+      <p>
+        Whenever JavaScript runs any function — including the top-level code in a file — it first
+        builds an <strong>execution context</strong>: a small record tracking that call's own
+        variables, where to resume once it's done, and a link back to whoever called it (the second
+        diagram above). Calling a function pushes a new context onto the call stack. Returning from
+        it pops that same context back off.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>What the engine is doing, step by step</h3>
+      <ol>
+        <li>Before any of your code runs, it builds the <strong>global execution context</strong> and puts it on the stack first.</li>
+        <li>Each function call builds a <strong>new</strong> context for that specific call and puts it on top of the stack.</li>
+        <li>The engine only ever works on the context at the top — it does not return to whatever called it until that top context finishes.</li>
+        <li>When a call finishes, its context comes off the top, and the caller picks up exactly where it left off.</li>
+      </ol>
+    </article>
+
+    <hr class="section-divider">
+
+    <!-- ===================== LAB ===================== -->
+    <h2>Lab</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> predict, then observe, the exact order function calls resolve in, and connect it to what the stack looks like at each point.</p>
+      <p style="margin-bottom: 0;"><strong>You'll need:</strong> a browser console or <code>node</code> — no project, no files.</p>
+    </div>
+
+    <div data-step-checkboxes>
+      <article class="card lab-unit">
+        <h3>Lab 1 of 1 — Trace a small call chain</h3>
+
+        <h4>Task</h4>
+        <p>Two snippets, one small change apart. Predict the print order before running each one.</p>
+
+        <h4>Instructions</h4>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 1 complete">
+            <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 1/5</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>function takeOrder() {
+  console.log("order taken");
+  brewCoffee();
+  console.log("order handed to customer");
+}
+
+function brewCoffee() {
+  console.log("coffee brewed");
+}
+
+takeOrder();</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've formed a guess about the print order without running it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 2 complete">
+            <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 2/5</div>
+          <div class="step-body">
+            <p>Predict the exact order the three lines print in, then reveal.</p>
+            <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+order taken
+coffee brewed
+order handed to customer
+
+What you wrote: a call to takeOrder(), which itself calls brewCoffee()
+partway through.
+
+What the engine effectively does:
+1. global context on the stack
+2. takeOrder() called -> its context pushed, logs "order taken"
+3. brewCoffee() called -> its context pushed, logs "coffee brewed"
+4. brewCoffee() finishes -> its context popped
+5. back inside takeOrder(), logs "order handed to customer"
+6. takeOrder() finishes -> its context popped
+
+takeOrder() cannot reach its last line until brewCoffee() has
+completely finished -- the engine never jumps back to a paused
+context while something is still sitting on top of it.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've run the snippet yourself and it matches the revealed order.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 3 complete">
+            <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 3/5</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file from Step 1 yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Add a new function named steamMilk, with no parameters.
+// Inside steamMilk, log the string "milk steamed".
+
+// Inside brewCoffee, after its existing console.log line,
+// add a call to steamMilk().
+
+// Leave takeOrder() and the final takeOrder(); call unchanged.</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> your file calls <code>steamMilk()</code> from inside <code>brewCoffee()</code>, and you can say exactly where that tray would sit relative to the other two.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 4 complete">
+            <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 4/5</div>
+          <div class="step-body">
+            <p>Predict the full print order, and how many contexts are on the stack (including global) at the moment <code>steamMilk()</code> is running.</p>
+            <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+order taken
+coffee brewed
+milk steamed
+order handed to customer
+
+While steamMilk() runs, the stack is 4 deep:
+  steamMilk -> brewCoffee -> takeOrder -> global
+
+One more level of nesting just adds one more context to the
+same stack -- the mechanism is identical, only the depth changes.</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 5 complete">
+            <input type="checkbox" data-step-checkbox="4" aria-label="Mark step 5 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 5/5</div>
+          <div class="step-body">
+            <p>Comprehension check — write your answer before moving on: if <code>steamMilk()</code> called itself with no stopping condition, what would eventually happen, and why, specifically in terms of the call stack?</p>
+            <textarea class="predict-box" rows="3" placeholder="Your answer..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px;"></textarea>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== COMPREHENSION CHECKLIST ===================== -->
+    <h2>Comprehension Checklist</h2>
+    <div class="card">
+      <ul class="check-list">
+        <li>I can explain why "order handed to customer" can't print before "coffee brewed," without just saying "it runs top to bottom."</li>
+        <li>I can say precisely what gets added to the stack and what gets removed, for any single function call.</li>
+        <li>I can explain <code>RangeError: Maximum call stack size exceeded</code> in terms of the stack filling up, not just "infinite loop."</li>
+        <li>I understand the call stack is a general concept, not something unique to JavaScript.</li>
+      </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== POST-LAB QUIZ ===================== -->
+    <h2>Post-Lab Quiz</h2>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">In the 3-function version, what does the call stack look like at the exact moment steamMilk() is executing its console.log?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-post-0" value="0"> steamMilk, brewCoffee, takeOrder, global — 4 deep</label>
+            <label><input type="radio" name="lab05-post-0" value="1"> Just steamMilk — the others already finished</label>
+            <label><input type="radio" name="lab05-post-0" value="2"> steamMilk and global only</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Nothing above steamMilk() has returned yet, so all four contexts are still on the stack." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">Why can't brewCoffee() and takeOrder() be "in progress" at the same time?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-post-1" value="0"> The engine only ever runs the context on top of the stack; everything below is paused</label>
+            <label><input type="radio" name="lab05-post-1" value="1"> They can run together if declared close together in the file</label>
+            <label><input type="radio" name="lab05-post-1" value="2"> They run on two separate stacks that sync up afterward</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Single-threaded, one call stack — only the top context is ever the active one." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">What specifically causes RangeError: Maximum call stack size exceeded?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-post-2" value="0"> Calls that never return keep piling contexts onto the stack until its finite memory runs out</label>
+            <label><input type="radio" name="lab05-post-2" value="1"> Declaring too many variables in one function</label>
+            <label><input type="radio" name="lab05-post-2" value="2"> A <code>console.log</code> call that takes too long</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Every unreturned call keeps its context on the stack; with no stopping condition, that never stops growing." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== REFLECTION ===================== -->
+    <h2>Reflection Questions</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Write your own answer first — the blurred text is one possible answer, not the only correct one.
+    </p>
+
+    <div class="card">
+      <p><strong>1.</strong> Before this lab, would you have described a paused function as "fully stopped," or more like "still kind of running in the background"?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          "Kind of still running" is a common intuition, especially coming from UI frameworks where
+          things feel like they update live. The lab's model is stricter: a paused context does
+          nothing at all until it's back on top of the stack — no partial progress, no background
+          activity, just a held record waiting its turn.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>2.</strong> Where have you already relied on call-stack behavior without naming it — a debugger's "stack trace" view, for instance?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          A stack trace in an error message or debugger is a direct printout of the call stack at
+          the moment something went wrong — each line is one context, ordered from the innermost
+          (where the error happened) down to whatever originally kicked things off. That's the
+          same stack this lab traced by hand, just captured automatically on a crash.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT BREAKS ===================== -->
+    <h2>What Breaks If This Understanding Is Wrong?</h2>
+    <div class="alert alert-warning">
+      If function calls feel like they happen "kind of in parallel" or "whenever they get around to
+      it," nothing about hoisting, scope, closures, or the event loop later in this curriculum will
+      make sense — all of them depend on "exactly one thing runs at a time, in a strict add/remove
+      order."
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT WAS LEARNED ===================== -->
+    <h2>What JavaScript Concept Was Learned Today?</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        The call stack (a general programming concept) and the execution context (JavaScript's own
+        record built for every call) — the foundation the rest of this curriculum builds on.
+      </p>
+      <p class="concern-relate" style="margin-bottom: 0;">
+        <strong>Relates to:</strong> ▶ Execution (10 of 10) — this experiment demonstrated
+        JavaScript's specific answer to "how does source code become running computation."
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a> &nbsp;&middot;&nbsp;
+      <a href="../lab-06-creation-vs-execution-phase/index.html">Lab 05 — Creation Phase vs Execution Phase &rarr;</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>

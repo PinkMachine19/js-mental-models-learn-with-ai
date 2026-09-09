@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 04 — undefined, null &amp; Undeclared Identifiers — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-03-values-types-typeof/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-05-execution-context-call-stack/index.html">next lab &rarr;</a>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Foundation</span>
+      <span class="badge badge-current">Lab 04</span>
+    </div>
+    <h1>undefined, null &amp; Undeclared Identifiers</h1>
+    <p class="subtitle">
+      Three different kinds of "nothing," and they behave nothing alike. Confusing them is one of
+      the easiest ways to misdiagnose a bug.
+    </p>
+
+    <div class="build-state">
+      <strong>What this lab produces:</strong> no files, no commit — a pure concept lab. You'll run
+      one short snippet in a console or with <code>node</code>.
+    </div>
+
+    <div class="concept-type">Concept type: <strong>Mostly JavaScript-Specific</strong></div>
+
+    <div class="concern-badge">
+      <div class="concern-glyph">◇</div>
+      <div class="concern-text">
+        <span class="concern-name">VALUES &amp; TYPES</span>
+        <span class="concern-index">1 of 10</span>
+      </div>
+    </div>
+    <p class="subtitle" style="margin-top: -6px;">
+      "Represent no value" is part of the same question Lab 03 opened — JavaScript's answer here
+      turns out to be three different answers layered together.
+    </p>
+
+    <!-- ===================== MENTAL MODELS (SVG) ===================== -->
+    <h2>Mental Models</h2>
+    <div class="visual-grid">
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v1t v1d">
+            <title id="v1t">Three different kinds of absence</title>
+            <desc id="v1d">Three boxes: an empty box the engine filled in, an empty box you filled in on purpose, and no box at all.</desc>
+            <rect x="8" y="30" width="48" height="40" rx="4"/>
+            <text x="32" y="54">?</text>
+            <rect x="66" y="30" width="48" height="40" rx="4" class="active"/>
+            <text x="90" y="54" class="active">Ø</text>
+            <text x="140" y="54">✕</text>
+            <text x="32" y="86">undefined</text>
+            <text x="90" y="86" class="active">null</text>
+            <text x="140" y="86">no box</text>
+          </svg>
+        </div>
+        <h3>Three Kinds of "Nothing"</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A box that exists but was never filled, a box you deliberately emptied, and a spot with no box at all — three completely different situations.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v2t v2d">
+            <title id="v2t">Reading a name that was never declared</title>
+            <desc id="v2d">A magnifying glass searches the scope chain and finds nothing, resulting in an error.</desc>
+            <circle cx="70" cy="55" r="30"/>
+            <path d="M92 77 L112 97"/>
+            <text x="70" y="60">?</text>
+            <rect x="126" y="30" width="46" height="50" rx="4" class="active"/>
+            <text x="149" y="60" class="active">throw</text>
+          </svg>
+        </div>
+        <h3>Undeclared Reads Throw</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>If the scope chain search from Lab 09 never finds the name at all, the engine doesn't hand back a placeholder — it throws.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v3t v3d">
+            <title id="v3t">undefined is a storable value</title>
+            <desc id="v3d">A hand places the word undefined into a labeled box, like any other value.</desc>
+            <rect x="55" y="35" width="70" height="50" rx="4"/>
+            <text x="90" y="65">undefined</text>
+            <circle cx="30" cy="60" r="10" class="active"/>
+            <path class="active" d="M40 60 H52"/>
+          </svg>
+        </div>
+        <h3>undefined Is a Real Value</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>You can assign <code>undefined</code> to a variable yourself — it's a value with its own type (Lab 03), not just an error state.</p></div>
+      </div>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PRE-LAB QUIZ ===================== -->
+    <h2>Pre-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Answer from intuition first.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">You write <code>let score;</code> with no assignment, then <code>console.log(score)</code>. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab04-pre-0" value="0"> It logs <code>undefined</code></label>
+            <label><input type="radio" name="lab04-pre-0" value="1"> It logs <code>null</code></label>
+            <label><input type="radio" name="lab04-pre-0" value="2"> It throws a <code>ReferenceError</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A declared variable with no assignment defaults to undefined — it exists, it's just empty." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">You write <code>console.log(neverDeclared)</code>, where <code>neverDeclared</code> was never written anywhere else in the file. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab04-pre-1" value="0"> It logs <code>undefined</code></label>
+            <label><input type="radio" name="lab04-pre-1" value="1"> It throws a <code>ReferenceError</code></label>
+            <label><input type="radio" name="lab04-pre-1" value="2"> It logs <code>null</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A name that was never declared anywhere isn't 'empty' — it doesn't exist at all, which is a different, louder failure." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">Is <code>null</code> just another spelling of <code>undefined</code>, or something else?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab04-pre-2" value="0"> Just an alias for <code>undefined</code></label>
+            <label><input type="radio" name="lab04-pre-2" value="1"> A distinct value meaning "intentionally set to nothing"</label>
+            <label><input type="radio" name="lab04-pre-2" value="2"> An instance of an empty object</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="null is a deliberate, distinct primitive value you assign yourself — it's not the same thing as a variable that was simply never given a value." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== CONCEPT ===================== -->
+    <h2>The Concept</h2>
+
+    <article class="concept-part">
+      <h3>"Absence of a value" is common; JavaScript's three-way split isn't</h3>
+      <p>
+        Most languages have some way to represent "no value" — but JavaScript is unusual in having
+        three genuinely different situations that all sound like "nothing" in casual conversation.
+        Telling them apart precisely is the actual skill this lab teaches.
+      </p>
+      <div class="xlang">
+        <div class="xlang-label">Cross-language note</div>
+        <p><strong>Common concept:</strong> representing "no value."</p>
+        <p><strong>Python:</strong> has one deliberate "nothing" value, <code>None</code>, and
+        reading a name that was never assigned anywhere raises <code>NameError</code> — conceptually
+        close to JavaScript's undeclared-identifier case below.</p>
+        <p><strong>JavaScript:</strong> splits this into two separate concepts — the engine's own
+        default empty state (<code>undefined</code>) and your own deliberate empty state
+        (<code>null</code>) — on top of the undeclared-identifier case Python already has an
+        equivalent for.</p>
+      </div>
+    </article>
+
+    <article class="concept-part">
+      <h3>The three cases</h3>
+      <ol>
+        <li><strong><code>undefined</code></strong> — a variable exists and was declared, but was
+        never assigned a value. This is the engine's own default, not something you typically
+        write yourself.</li>
+        <li><strong><code>null</code></strong> — a variable exists, and you deliberately assigned it
+        the value <code>null</code> to mean "no value belongs here right now." It's a real primitive
+        type (Lab 03), and you always assign it on purpose.</li>
+        <li><strong>Undeclared identifier</strong> — the name was never declared anywhere the
+        engine's scope-chain search (Lab 09) can find. Reading it throws a <code>ReferenceError</code>
+        instead of returning any kind of empty value.</li>
+      </ol>
+    </article>
+
+    <hr class="section-divider">
+
+    <!-- ===================== LAB ===================== -->
+    <h2>Lab</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> observe all three cases side by side, including the one that throws.</p>
+      <p style="margin-bottom: 0;"><strong>You'll need:</strong> a browser console or <code>node</code> — no project, no files.</p>
+    </div>
+
+    <div data-step-checkboxes>
+      <article class="card lab-unit">
+        <h3>Lab 1 of 1 — Compare all three kinds of "nothing"</h3>
+
+        <h4>Task</h4>
+        <p>Run all three cases, one of which is wrapped in <code>try/catch</code> so it doesn't stop the script.</p>
+
+        <h4>Instructions</h4>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 1 complete">
+            <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 1/4</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>let ticketCode;
+console.log("declared, not assigned:", ticketCode);
+
+let seatAssignment = null;
+console.log("deliberately empty:", seatAssignment);
+
+try {
+  console.log("never declared:", boardingGroup);
+} catch (err) {
+  console.log("threw:", err.message);
+}</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've predicted all three outputs without running it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 2 complete">
+            <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 2/4</div>
+          <div class="step-body">
+            <p>Predict all three outputs, then reveal.</p>
+            <textarea class="predict-box" rows="3" placeholder="My predictions: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>declared, not assigned: undefined
+deliberately empty: null
+threw: boardingGroup is not defined
+
+What you wrote: three variables in three different states, one
+inside a try/catch specifically because it's expected to throw.
+
+What the engine effectively does: ticketCode exists in the scope
+chain with the engine's default empty value. seatAssignment exists
+with the value you chose yourself. boardingGroup was never
+registered anywhere the scope-chain search can find, so reading it
+is a hard failure, not an empty result.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've run the snippet yourself and it matches the revealed output.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 3 complete">
+            <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 3/4</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Below the existing code, add one more console.log:
+// log the result of typeof boardingGroup directly,
+// NOT inside a try/catch this time.</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the new line is added, outside of any try/catch.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 4 complete">
+            <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 4/4</div>
+          <div class="step-body">
+            <p>Predict what <code>typeof boardingGroup</code> does — does it throw the same way direct access did, or something else? Run it and compare, then answer: why might a language design <code>typeof</code> to behave this way specifically for undeclared names?</p>
+            <textarea class="predict-box" rows="3" placeholder="Your answer..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px;"></textarea>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== COMPREHENSION CHECKLIST ===================== -->
+    <h2>Comprehension Checklist</h2>
+    <div class="card">
+      <ul class="check-list">
+        <li>I can state, without hesitating, which of the three cases throws and which two don't.</li>
+        <li>I know <code>null</code> is always something a program assigns on purpose — the engine never hands it out as a default.</li>
+        <li>I know <code>typeof</code> on an undeclared name is safe (returns <code>"undefined"</code>), while directly reading it is not.</li>
+      </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== POST-LAB QUIZ ===================== -->
+    <h2>Post-Lab Quiz</h2>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">Which of the three cases in this lab is the only one that ever throws when read directly?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab04-post-0" value="0"> A declared-but-unassigned variable</label>
+            <label><input type="radio" name="lab04-post-0" value="1"> A variable deliberately set to <code>null</code></label>
+            <label><input type="radio" name="lab04-post-0" value="2"> An identifier that was never declared anywhere</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Only a truly undeclared name throws on direct read — the other two are valid, existing variables with empty values." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">Does the engine ever assign null to a variable on its own, without your code doing it explicitly?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab04-post-1" value="0"> No — null only ever appears because code assigned it deliberately</label>
+            <label><input type="radio" name="lab04-post-1" value="1"> Yes — every unassigned variable defaults to null</label>
+            <label><input type="radio" name="lab04-post-1" value="2"> Yes, but only inside functions</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The engine's own default for an unassigned variable is undefined, never null." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">What does typeof someUndeclaredName return?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab04-post-2" value="0"> It throws, same as reading it directly</label>
+            <label><input type="radio" name="lab04-post-2" value="1"> "undefined", without throwing</label>
+            <label><input type="radio" name="lab04-post-2" value="2"> "null"</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="typeof is specifically safe on undeclared names — one of the only operations that is." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== REFLECTION ===================== -->
+    <h2>Reflection Questions</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Write your own answer first — the blurred text is one possible answer, not the only correct one.
+    </p>
+
+    <div class="card">
+      <p><strong>1.</strong> When would you deliberately assign <code>null</code> to something instead of just leaving it <code>undefined</code>?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          When "no value yet" is a meaningful state your own code chose, versus a variable that
+          simply hasn't been touched. For example, a <code>selectedSeat</code> field that starts as
+          <code>null</code> communicates "the user hasn't picked one," which reads differently from
+          a variable that was just never assigned by accident.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>2.</strong> Why might a language deliberately make <code>typeof</code> safe on undeclared names, when directly reading them throws?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          It gives code a way to safely ask "does this even exist" without wrapping every check in
+          a <code>try/catch</code> — useful for feature-detection style code checking whether some
+          optional global exists before using it.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT BREAKS ===================== -->
+    <h2>What Breaks If This Understanding Is Wrong?</h2>
+    <div class="alert alert-warning">
+      Confusing "declared but empty" with "never declared" will make error messages feel random —
+      you'll misread a real bug (a typo'd variable name causing a <code>ReferenceError</code>) as
+      if it were just an empty value to work around, instead of fixing the actual typo.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT WAS LEARNED ===================== -->
+    <h2>What JavaScript Concept Was Learned Today?</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        The difference between the engine's own default empty value (<code>undefined</code>), your
+        own deliberate empty value (<code>null</code>), and a name that doesn't exist at all
+        (undeclared, throws).
+      </p>
+      <p class="concern-relate" style="margin-bottom: 0;">
+        <strong>Relates to:</strong> ◇ Values &amp; Types (1 of 10) — three different answers to
+        "how does the language represent nothing," layered inside one type system.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a> &nbsp;&middot;&nbsp;
+      <a href="../lab-05-execution-context-call-stack/index.html">Lab 04 — Execution Context &amp; the Call Stack &rarr;</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bonus Class — A Managed Language vs. A Script-Born Language — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Orientation</span>
+      <span class="badge badge-gate">Bonus Class</span>
+    </div>
+    <h1>A Managed Language vs. A Script-Born Language</h1>
+    <p class="subtitle">
+      C# and JavaScript, side by side — for someone who already thinks in C#. No general
+      "what is a programming language" tour this time (Class 1 already covered that ground with
+      Python) — straight into the comparisons that actually matter coming from C#.
+    </p>
+
+    <div class="build-state">
+      <strong>What this class produces:</strong> no files, no commit — reading and two tiny
+      runnable experiments. This is a personal supplement, not part of the main numbered sequence.
+    </div>
+
+    <div class="alert alert-info">
+      Not part of the Class 1/2/Lab 03+ numbering — this is a standalone bonus lesson for the
+      C#-background angle specifically. Skip it entirely if you're following the main sequence
+      and don't need the C# framing.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>The One-Sentence Version</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        C# is a statically-typed, compiled, class-based language built around the managed .NET
+        runtime. JavaScript is a dynamically-typed, engine-interpreted-and-JIT-compiled language
+        that started as browser scripting and grew into a general-purpose one, with an object
+        model built on prototypes rather than classes underneath. Same broad job — most of these
+        differences are not arbitrary; they follow from those two starting points.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Ten Places C# and JavaScript Genuinely Diverge</h2>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Typing: inferred-static vs. genuinely dynamic</h4><span class="compare-label">Type system</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>var age = 30;
+age = "thirty"; // compile error</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>let age = 30;
+age = "thirty"; // fine, no error</code></pre></div>
+      </div>
+      <p class="compare-explain">C#'s <code>var</code> is compile-time type inference — the variable's type is fixed the moment the compiler sees the initializer; it's sugar, not dynamic typing. JavaScript's <code>let</code>/<code>const</code> hold no type at all — the value can be any type, and can change type on reassignment. There is no JS equivalent of "the compiler rejects this."</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Null: one null vs. a three-way split</h4><span class="compare-label">JavaScript-specific gotcha</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>string? name = null;
+Console.WriteLine(name is null);</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>let name;        // undefined
+let city = null; // null
+// referencing an undeclared name throws</code></pre></div>
+      </div>
+      <p class="compare-explain">C# (8+) has nullable reference types as an opt-in, compiler-enforced annotation on top of one <code>null</code>. JavaScript has no nullable-type annotations at all, but splits "nothing" into two runtime values plus a third failure mode — an unassigned variable is <code>undefined</code>, a deliberately empty one is <code>null</code>, and an undeclared name throws outright. This course's Lab 04 covers the split in full.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Equality: type-checked and overloadable vs. type-coercing</h4><span class="compare-label">JavaScript-specific gotcha</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>1 == "1"; // compile error — no implicit conversion</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>1 == "1"  // true  (coerces)
+1 === "1" // false (no coercion)</code></pre></div>
+      </div>
+      <p class="compare-explain">C#'s <code>==</code> either compares matching types directly or calls an overloaded operator you (or the type) defined — mismatched types across most built-ins are a compile error, not a runtime surprise. JavaScript's <code>==</code> silently converts one or both operands before comparing; <code>===</code> is the one that behaves closer to what a C# developer expects from <code>==</code>. Default to <code>===</code>.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Classes: real class-based OOP vs. prototypes wearing class syntax</h4><span class="compare-label">JavaScript-specific gotcha</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>public class Dog {
+    public string Name { get; }
+    public Dog(string name) => Name = name;
+}</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>class Dog {
+  constructor(name) {
+    this.name = name;
+  }
+}</code></pre></div>
+      </div>
+      <p class="compare-explain">In C#, <code>class</code> is the object model — types, vtables, and inheritance are class-based all the way down. In JavaScript, <code>class</code> is syntax sitting on top of a completely different underlying mechanism: prototype-based inheritance, where instances link directly to another object instead of to a compiler-managed type. It reads similarly; it is not the same model underneath. This course spends several labs specifically on that distinction.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Properties: dedicated syntax vs. get/set functions</h4><span class="compare-label">Syntax</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>public int Age { get; set; }</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>class Person {
+  #age;
+  get age() { return this.#age; }
+  set age(v) { this.#age = v; }
+}</code></pre></div>
+      </div>
+      <p class="compare-explain">C# auto-properties generate a backing field for you. JavaScript has no auto-property equivalent — a real getter/setter pair with a backing field is always written out by hand (here using a genuinely private <code>#field</code>, not just a naming convention).</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Interfaces: a compiler-checked contract vs. nothing enforced at all</h4><span class="compare-label">Type system</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>public interface IQuacks { void Quack(); }
+public class Duck : IQuacks {
+    public void Quack() { }
+}</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>function makeItQuack(thing) {
+  thing.quack(); // works if thing HAS a quack method
+}                // nothing declares this requirement anywhere</code></pre></div>
+      </div>
+      <p class="compare-explain">C#'s interfaces are a compile-time contract — implementing one is declared and checked. JavaScript has no built-in interface concept at all: if an object happens to have the right method, calling it works; if it doesn't, you get a runtime <code>TypeError</code> the moment it's called, not before. (TypeScript adds compile-time structural interfaces back on top of JavaScript, but plain JS has none.)</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Value types: C# actually has them; JavaScript doesn't</h4><span class="compare-label">Language design choice</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>struct Point { public int X, Y; }
+Point a = new Point { X = 1 };
+Point b = a; // real copy
+b.X = 99;    // a.X is still 1</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>let a = { x: 1 };
+let b = a;   // same object, not a copy
+b.x = 99;    // a.x is now 99 too</code></pre></div>
+      </div>
+      <p class="compare-explain">C# lets you define your own value types (<code>struct</code>) that copy on assignment. JavaScript has no user-definable value type at all — only primitives (number, string, boolean, etc.) copy by value; every object, array, and function you create is always a reference, always shared on assignment, with no opt-out. There's no JS equivalent of "make this type copy like an <code>int</code> does."</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Async: real thread-pool parallelism vs. one thread, always</h4><span class="compare-label">Runtime</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>await Task.Run(() => HeavyCpuWork());
+// can genuinely run on another thread</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>await someAsyncCall();
+// still runs on the SAME single thread as everything else</code></pre></div>
+      </div>
+      <p class="compare-explain">This is the one most worth slowing down for. C#'s <code>Task</code>/<code>async</code>/<code>await</code> can genuinely hand CPU-bound work to another OS thread via the thread pool — real parallelism is available. JavaScript is single-threaded, full stop, in every environment (browser tab or Node process) — <code>async</code>/<code>await</code> never creates a new thread; it's sugar over the event loop deciding when a paused function resumes on that same one thread. A CPU-heavy <code>async</code> function in JS still blocks everything else while it runs. This course dedicates several labs specifically to that model.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Execution: IL + CLR JIT vs. an engine doing it all at once</h4><span class="compare-label">Runtime</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>// csc compiles source -> IL (a .dll/.exe)
+// CLR loads the IL and JIT-compiles it to
+// native code at (or before) run time</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>// no separate build artifact by default —
+// an engine (V8, SpiderMonkey, ...) parses
+// source directly, interprets and/or
+// JIT-compiles hot paths while running</code></pre></div>
+      </div>
+      <p class="compare-explain">C# has a distinct ahead-of-time compile step producing an intermediate-language artifact, which the CLR then JIT-compiles at load/run time. Plain JavaScript has no separate compiled-artifact step at all in the way C# does — a JS engine goes from source text to running code itself, typically using a mix of parsing, interpretation, and JIT compilation internally, with no IL-equivalent file ever produced. "Compiled vs. interpreted" undersells how different these two pipelines actually are.</p>
+    </div>
+
+    <div class="compare-topic">
+      <div class="compare-topic-head"><h4>Encapsulation: four real access modifiers vs. one real one</h4><span class="compare-label">Language design choice</span></div>
+      <div class="diff-col">
+        <div class="diff-card"><div class="diff-card-lang">C#</div><pre><code>private, protected, internal,
+protected internal, public
+// all compiler-enforced</code></pre></div>
+        <div class="diff-card"><div class="diff-card-lang">JavaScript</div><pre><code>class Account {
+  #balance = 0; // truly private, enforced by the engine
+  balance = 0;  // public — that's the only other option
+}</code></pre></div>
+      </div>
+      <p class="compare-explain">C# has a full set of compiler-checked access modifiers, including cross-assembly visibility (<code>internal</code>) with no JavaScript equivalent at all. JavaScript has exactly two real states: public (the default), or truly private via a <code>#field</code> (engine-enforced, added relatively recently to the language). There is no built-in <code>protected</code> or module-internal visibility — older JS code faked "private" with a leading underscore, which was never actually enforced by anything.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Tiny Experiment: Assignment Doesn't Copy the Way a struct Does</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> confirm JavaScript has no value-type opt-out for objects, directly.</p>
+      <div class="lab-instruction">
+        <p>// Paste this into a JavaScript console (browser or node) — do not run it yet.</p>
+        <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+      </div>
+      <pre><code>let pointA = { x: 1, y: 1 };
+let pointB = pointA;
+pointB.x = 99;
+console.log(pointA.x);</code></pre>
+      <p>If <code>Point</code> were a C# <code>struct</code>, <code>pointB = pointA</code> would copy it, and <code>pointA.x</code> would still be <code>1</code> after. Predict what actually prints here, then reveal.</p>
+      <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+      <div class="blur-solution" style="margin-top: 12px;">
+        <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+        <pre aria-hidden="true"><code>Output: 99
+
+pointA and pointB were never two objects -- pointB = pointA copied
+a reference to the SAME object, not the object's contents. There
+is no way to declare a JavaScript object type that copies on
+assignment the way a C# struct does; every object is always
+reference semantics, unconditionally.</code></pre>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Tiny Experiment: await Doesn't Move Work Off the Thread</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> confirm that a JavaScript async function still blocks everything else while its own synchronous code runs.</p>
+      <div class="lab-instruction">
+        <p>// Paste this into a JavaScript console (browser or node) — do not run it yet.</p>
+        <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+      </div>
+      <pre><code>console.log("before");
+
+async function work() {
+  let total = 0;
+  for (let i = 0; i < 500000000; i++) total += i; // synchronous, CPU-bound
+  console.log("work done");
+}
+
+work();
+console.log("after calling work()");</code></pre>
+      <p>In C#, wrapping heavy work in an <code>async</code> method with <code>Task.Run</code> can keep the UI/caller responsive on another thread. Predict the print order here, and whether anything else could run while the loop is grinding.</p>
+      <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+      <div class="blur-solution" style="margin-top: 12px;">
+        <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+        <pre aria-hidden="true"><code>Output: before, work done, after calling work()
+
+Marking work() async did not move the loop to another thread --
+there is no other thread. The loop runs synchronously, on the same
+single thread as the rest of the script, fully blocking it, exactly
+as if async weren't there at all. "work done" logs before "after
+calling work()" because the whole function body runs to completion
+before returning control, since it never actually hit an await on
+anything that yields. This is the opposite of what Task.Run gives
+you in C#.</code></pre>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>The Takeaway</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Most of your C# instincts about syntax will transfer fine — braces, semicolons, familiar
+        keywords. The instincts worth actively rewiring are the ones this page focused on: type
+        checking happens at compile time in C# and mostly doesn't exist in JS; C#'s object model
+        is class-based while JS's is prototype-based underneath a class-shaped syntax; C# gives
+        you real value types while JS never does; and C#'s async can use real threads while JS's
+        never can. Everything else in this course builds out the JavaScript side of that picture
+        in detail.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>
