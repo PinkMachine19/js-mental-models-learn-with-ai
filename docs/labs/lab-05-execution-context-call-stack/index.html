@@ -77,7 +77,7 @@
             <text x="168" y="66" transform="rotate(90 168 66)">only top tray is active</text>
           </svg>
         </div>
-        <h3>One Active Tray at a Time</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>One Active Tray at a Time</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>Only the top tray is being worked. Everything below it is real, held, and waiting — not forgotten, not running, just paused.</p></div>
       </div>
@@ -96,7 +96,7 @@
             <text x="90" y="90">link back to the caller</text>
           </svg>
         </div>
-        <h3>What One Tray Holds</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>What One Tray Holds</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>Every call gets a record like this. The engine's name for a tray is an execution context.</p></div>
       </div>
@@ -116,11 +116,58 @@
             <text x="160" y="64">order done</text>
           </svg>
         </div>
-        <h3>Add on Call, Remove on Return</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>Add on Call, Remove on Return</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>A tray only ever leaves the stack from the top, and only once that order is fully done — never before, never out of order.</p></div>
       </div>
 
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: phone calls placed on hold</title>
+            <desc id="v4d">A phone handset with three calls stacked on hold, only the top one connected live.</desc>
+            <rect x="55" y="10" width="70" height="100" rx="10"/>
+            <circle cx="90" cy="95" r="8"/>
+            <rect x="65" y="25" width="50" height="16" rx="3"/>
+            <text x="90" y="37" style="font-size:8px;">call C — on hold</text>
+            <rect x="65" y="45" width="50" height="16" rx="3"/>
+            <text x="90" y="57" style="font-size:8px;">call B — on hold</text>
+            <rect x="65" y="65" width="50" height="16" rx="3" class="active"/>
+            <text x="90" y="77" style="font-size:8px;" class="active">call A — talking</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: Calls on Hold</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Picture juggling phone calls: you put caller A on hold to take caller B, then put B on hold to take caller C. You're only ever actually talking to one person at a time — the others are genuinely on hold, waiting, in the exact order you'll return to them.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">Misconception: paused does not mean forgotten or still running</title>
+            <desc id="v5d">A red X over a spinning gear labeled still running, a green check over a still snapshot labeled held exactly as left.</desc>
+            <text x="45" y="35" style="font-size:20px;">✕</text>
+            <text x="45" y="65" style="font-size:8px;">"still running"</text>
+            <text x="135" y="35" style="font-size:20px;" class="active">✓</text>
+            <text x="135" y="65" style="font-size:8px;" class="active">held, unchanged</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: Paused ≠ Still Running</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>It's tempting to imagine a paused function is somehow still quietly doing something in the background. It isn't — its execution context just sits there, completely frozen, exactly as it was the instant it got paused, until it's back on top of the stack.</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 4</strong> — I can trace, for a short chain of function calls, exactly what the call stack looks like at any specific point during execution.</li>
+        <li><strong>Objective 2 of 4</strong> — I can state precisely what gets pushed onto the stack and what gets popped off, for any single function call.</li>
+        <li><strong>Objective 3 of 4</strong> — I can explain why two functions can never be "in progress" at the exact same instant in JavaScript.</li>
+        <li><strong>Objective 4 of 4</strong> — I can explain <code>RangeError: Maximum call stack size exceeded</code> in terms of the stack's finite memory filling up, not just "infinite loop."</li>
+      </ol>
     </div>
 
     <hr class="section-divider">
@@ -134,7 +181,7 @@
     <div class="quiz-set" data-quiz-set data-threshold="80">
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">A function calls another function partway through its own code. What happens to the outer function while the inner one is running?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">A function calls another function partway through its own code. What happens to the outer function while the inner one is running?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab05-pre-0" value="0"> It's fully paused, waiting for the inner call to finish</label>
@@ -147,7 +194,7 @@
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">Can JavaScript be in the middle of two different function calls at the exact same instant?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">Can JavaScript be in the middle of two different function calls at the exact same instant?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab05-pre-1" value="0"> No — there's one call stack, one thing actively running at a time</label>
@@ -160,7 +207,7 @@
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">Guess: what happens if a function keeps calling itself with no condition that ever stops it?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Guess: what happens if a function keeps calling itself with no condition that ever stops it?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab05-pre-2" value="0"> It runs forever with no error</label>
@@ -169,6 +216,32 @@
           </div>
           <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
           <p class="quiz-feedback" data-explanation="The stack occupies real, finite memory. Calls that never return fill it up and the engine throws RangeError: Maximum call stack size exceeded." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Function A calls function B, which calls function C. While C is running, how many execution contexts are on the stack, including global?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-pre-3" value="0"> 4 — C, B, A, and global</label>
+            <label><input type="radio" name="lab05-pre-3" value="1"> 1 — only C, since it's the only one actively running</label>
+            <label><input type="radio" name="lab05-pre-3" value="2"> 3 — A, B, and C, but not global</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Nothing above C has returned yet, and the global context is always the very first one on the stack — all four are present." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">Once C finishes and returns, which function's code resumes next, and from where?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-pre-4" value="0"> B, resuming exactly where it left off</label>
+            <label><input type="radio" name="lab05-pre-4" value="1"> A, since it's the original caller</label>
+            <label><input type="radio" name="lab05-pre-4" value="2"> B, but it restarts from its own first line</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Popping C's context reveals B's, which resumes exactly where it was paused — never from the top, and never skipping straight to A." role="status" aria-live="polite"></p>
         </div>
       </details>
 
@@ -196,6 +269,19 @@
         <p><strong>JavaScript:</strong> same idea, one call stack per thread — what's JavaScript-specific
         is what gets stored in each context, next.</p>
       </div>
+    </article>
+
+    <article class="concept-part">
+      <h3>Why does an execution context need to exist at all?</h3>
+      <p>
+        When one function calls another, the engine has to answer a very practical question:
+        once the inner call finishes, exactly <em>where</em> should execution pick back up, and
+        with which values? Without some record answering that, "returning" from a function call
+        would be meaningless — the engine would have no way to know what it was doing before, or
+        what local variables that paused call still needs. An <strong>execution context</strong>
+        is that record: a small package the engine builds for every single call, holding the
+        answer to "where was I, and what did I have."
+      </p>
     </article>
 
     <article class="concept-part">
@@ -241,7 +327,7 @@
           <label class="step-checkbox" title="Mark step 1 complete">
             <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 1/5</div>
+          <div class="step-num">Step 1 of 5</div>
           <div class="step-body">
             <div class="lab-instruction">
               <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
@@ -266,7 +352,7 @@ takeOrder();</code></pre>
           <label class="step-checkbox" title="Mark step 2 complete">
             <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 2/5</div>
+          <div class="step-num">Step 2 of 5</div>
           <div class="step-body">
             <p>Predict the exact order the three lines print in, then reveal.</p>
             <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -300,7 +386,7 @@ context while something is still sitting on top of it.</code></pre>
           <label class="step-checkbox" title="Mark step 3 complete">
             <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 3/5</div>
+          <div class="step-num">Step 3 of 5</div>
           <div class="step-body">
             <div class="lab-instruction">
               <p>// Edit the file from Step 1 yourself. Don't paste finished code — type it from these comments.</p>
@@ -321,7 +407,7 @@ context while something is still sitting on top of it.</code></pre>
           <label class="step-checkbox" title="Mark step 4 complete">
             <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 4/5</div>
+          <div class="step-num">Step 4 of 5</div>
           <div class="step-body">
             <p>Predict the full print order, and how many contexts are on the stack (including global) at the moment <code>steamMilk()</code> is running.</p>
             <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -346,7 +432,7 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
           <label class="step-checkbox" title="Mark step 5 complete">
             <input type="checkbox" data-step-checkbox="4" aria-label="Mark step 5 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 5/5</div>
+          <div class="step-num">Step 5 of 5</div>
           <div class="step-body">
             <p>Comprehension check — write your answer before moving on: if <code>steamMilk()</code> called itself with no stopping condition, what would eventually happen, and why, specifically in terms of the call stack?</p>
             <textarea class="predict-box" rows="3" placeholder="Your answer..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -373,10 +459,14 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
 
     <!-- ===================== POST-LAB QUIZ ===================== -->
     <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
     <div class="quiz-set" data-quiz-set data-threshold="80">
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">In the 3-function version, what does the call stack look like at the exact moment steamMilk() is executing its console.log?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">In the 3-function version, what does the call stack look like at the exact moment steamMilk() is executing its console.log?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab05-post-0" value="0"> steamMilk, brewCoffee, takeOrder, global — 4 deep</label>
@@ -389,7 +479,7 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">Why can't brewCoffee() and takeOrder() be "in progress" at the same time?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">Why can't brewCoffee() and takeOrder() be "in progress" at the same time?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab05-post-1" value="0"> The engine only ever runs the context on top of the stack; everything below is paused</label>
@@ -402,7 +492,7 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">What specifically causes RangeError: Maximum call stack size exceeded?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">What specifically causes RangeError: Maximum call stack size exceeded?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab05-post-2" value="0"> Calls that never return keep piling contexts onto the stack until its finite memory runs out</label>
@@ -411,6 +501,32 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
           </div>
           <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
           <p class="quiz-feedback" data-explanation="Every unreturned call keeps its context on the stack; with no stopping condition, that never stops growing." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Suppose takeOrder() called brewCoffee() twice in a row (not nested — one call, then it returns, then a second call). At most, how many brewCoffee contexts ever exist on the stack simultaneously?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-post-3" value="0"> 1 — the first call's context is popped before the second call ever gets pushed</label>
+            <label><input type="radio" name="lab05-post-3" value="1"> 2 — one for each call, both present at once</label>
+            <label><input type="radio" name="lab05-post-3" value="2"> 0 — sequential calls don't create contexts</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Two sequential (non-nested) calls never overlap on the stack — the first must fully return and pop before the second is ever pushed." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">A stack trace lists, top to bottom: steamMilk, brewCoffee, takeOrder, (anonymous). Which function's code is the engine actually executing at that moment?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab05-post-4" value="0"> steamMilk — the one listed at the top</label>
+            <label><input type="radio" name="lab05-post-4" value="1"> takeOrder — the outermost real function</label>
+            <label><input type="radio" name="lab05-post-4" value="2"> All four are executing simultaneously</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A stack trace lists the call stack top to bottom — the top entry is whichever context is currently active; everything beneath it is paused, waiting." role="status" aria-live="polite"></p>
         </div>
       </details>
 
@@ -425,7 +541,7 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
     </p>
 
     <div class="card">
-      <p><strong>1.</strong> Before this lab, would you have described a paused function as "fully stopped," or more like "still kind of running in the background"?</p>
+      <p><strong>Reflection 1 of 3.</strong> Before this lab, would you have described a paused function as "fully stopped," or more like "still kind of running in the background"?</p>
       <div class="blur-reflection">
         <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
         <p class="blur-reflection-answer" aria-hidden="true">
@@ -438,7 +554,7 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
     </div>
 
     <div class="card">
-      <p><strong>2.</strong> Where have you already relied on call-stack behavior without naming it — a debugger's "stack trace" view, for instance?</p>
+      <p><strong>Reflection 2 of 3.</strong> Where have you already relied on call-stack behavior without naming it — a debugger's "stack trace" view, for instance?</p>
       <div class="blur-reflection">
         <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
         <p class="blur-reflection-answer" aria-hidden="true">
@@ -446,6 +562,19 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
           the moment something went wrong — each line is one context, ordered from the innermost
           (where the error happened) down to whatever originally kicked things off. That's the
           same stack this lab traced by hand, just captured automatically on a crash.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> Before running Step 4's three-function version, did you correctly predict the stack would be 4 deep (including global), or did you forget to count global? What does that tell you about where your mental model still had a gap?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          A common gap is forgetting the global execution context entirely, since it's created
+          silently before any of your own code runs and never shows up as a function you wrote.
+          It's still a real context occupying a real slot on the stack the whole time your program
+          runs — every count of "how deep is the stack" needs to include it.
         </p>
       </div>
     </div>
@@ -476,9 +605,22 @@ same stack -- the mechanism is identical, only the depth changes.</code></pre>
       </p>
     </div>
 
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Lab 06 opens up an execution context and shows it's actually built in two separate passes.
+        That two-phase model directly explains "hoisting" — a behavior that looks mysterious until
+        you know exactly what this lab already taught: how a context comes into existence in the
+        first place.
+      </p>
+    </div>
+
     <p style="margin-top:24px;" aria-label="Lab navigation">
       <a href="../index.html">&larr; All labs</a> &nbsp;&middot;&nbsp;
-      <a href="../lab-06-creation-vs-execution-phase/index.html">Lab 05 — Creation Phase vs Execution Phase &rarr;</a>
+      <a href="../lab-06-creation-vs-execution-phase/index.html">Lab 06 — Creation Phase vs Execution Phase &rarr;</a>
     </p>
 
   </div>

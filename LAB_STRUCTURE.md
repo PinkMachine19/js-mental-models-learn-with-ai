@@ -1,8 +1,7 @@
-# Lab Structure — v1 (DRAFT, iterate here before touching Labs 03–07)
+# Lab Structure — v1 (APPROVED, applied to Labs 03–07)
 
-Status: **draft, under review.** Nothing in `docs/labs/` has been changed yet. We edit this
-file until it looks right, then apply it to Labs 03–07 as the reference implementation for
-later groups of labs.
+Status: **approved and applied.** This is the standard used for Labs 03–07. Open questions from
+the draft have been resolved (see §13) and section order has been finalized (see §12).
 
 Scope of this pass: **Labs 03–07 only** (Values/Types/typeof → var/let/const/TDZ). Class 1,
 Class 2, and the C#-bonus class are a different shape (orientation/index pages) and are not
@@ -41,20 +40,22 @@ existing badge patterns (`.step-num`, `.quiz-label`) rather than inventing a new
 
 ---
 
-## 2. Learning Objectives (new section — we don't currently have one)
+## 2. Learning Objectives — placed AFTER Mental Models, before the Pre-Lab Quiz
 
-Add a dedicated "Learning Objectives" block right after the header, before the concern badge,
-listing 3–5 concrete objectives numbered `Objective X of N`. Concrete = "the learner can predict
-X" or "the learner can explain why Y," not vague verbs like "understand hoisting."
+**Resolved:** objectives come after the mental-model cards, not right after the header. Order is
+Mental Models → Learning Objectives → Pre-Lab Quiz → Concepts. List 3–5 concrete objectives
+numbered `Objective X of N`. Concrete = "the learner can predict X" or "the learner can explain
+why Y," not vague verbs like "understand hoisting."
 
 ---
 
-## 3. Mental Models — expand from ~3 to 5–6
+## 3. Mental Models — expand from ~3 to 5–6, never force the count
 
-Keep the existing `.visual-card` SVG format for the ones that benefit from a diagram, but not
-every mental model needs an SVG — some can be a `.card` with just text if that's the clearer
-format for that particular angle. Vary the *kind* of mental model rather than restating the same
-idea six ways. Useful angles to mix:
+**Resolved:** 5–6 is the target, not a requirement — if a concept is honestly thin at 5, ship 5.
+Never invent a 6th mental model just to pad the count. Keep the existing `.visual-card` SVG
+format for the ones that benefit from a diagram, but not every mental model needs an SVG — some
+can be a `.card` with just text if that's the clearer format for that particular angle. Vary the
+*kind* of mental model rather than restating the same idea six ways. Useful angles to mix:
 
 1. Plain-English explanation of the core idea
 2. An analogy (physical-world comparison)
@@ -177,15 +178,15 @@ above is about connective *prose*, not about merging concerns.
 
 ---
 
-## 12. Structure checklist (apply top to bottom per lab)
+## 12. Structure checklist (apply top to bottom per lab) — FINAL ORDER
 
 ```
 LAB TITLE
 Concern badge(s) (unchanged from current)
-Learning Objectives          <- NEW section
-    Objective 1 of N .. N of N
 Mental Models
-    5-6 cards/blocks, Mental Model X of N
+    5-6 cards/blocks when it's honest, 5 when a 6th would be padding — Mental Model X of N
+Learning Objectives          <- placed here, AFTER mental models
+    Objective 1 of N .. N of N
 Pre-Lab Quiz
     Question 1 of 5 .. 5 of 5
 Concepts
@@ -205,15 +206,13 @@ Next
 
 ---
 
-## 13. Open questions / things to confirm before we start editing labs
+## 13. Resolved decisions
 
-- [ ] Is 5–6 mental models the right target for *every* one of Labs 03–07, or are some concepts
-  thin enough that 5 is the honest number and 6 would be padding? (Spec says don't inflate to hit
-  a number — flag per-lab if 6 doesn't fit naturally.)
-- [ ] Confirm Learning Objectives placement: directly under the concern badge/connective sentence,
-  before Mental Models — or after Mental Models, right before the Pre-Lab Quiz? (Draft above
-  assumes right after the header, before Mental Models.)
-- [ ] Anything else you want tightened before we touch Lab 03 as the first pass?
+- **Mental model count:** 5–6 is a target, never a requirement. Ship 5 when a 6th would be
+  padding.
+- **Learning Objectives placement:** after Mental Models, before the Pre-Lab Quiz (not right
+  after the header).
+- **Scope:** apply this structure to Labs 03–07 all at once, then review as a group.
 
 ---
 

@@ -75,7 +75,7 @@
             <path class="active" d="M118 34 H128" />
           </svg>
         </div>
-        <h3>The Value Carries the Type</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>The Value Carries the Type</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>The type belongs to the value sitting in memory, not to the variable name pointing at it. A variable is just a label.</p></div>
       </div>
@@ -94,7 +94,7 @@
             <text x="134" y="14" class="active">"number"</text>
           </svg>
         </div>
-        <h3>typeof Follows the Arrow</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>typeof Follows the Arrow</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>Renaming a variable, or copying its value into ten other variables, never changes what <code>typeof</code> reports — it's always reading the value at the end of the arrow.</p></div>
       </div>
@@ -122,11 +122,57 @@
             <text x="134" y="64" class="active">object</text>
           </svg>
         </div>
-        <h3>Two Families, Not One</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>Two Families, Not One</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>Seven specific primitive kinds, then everything else — arrays, functions, plain objects, dates — all counted as "object." Lab 21 covers why this split matters.</p></div>
       </div>
 
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: the material is stamped on the package, not the shipping label</title>
+            <desc id="v4d">A package stamped GLASS sits inside a shipping label sleeve; the label can be peeled off and replaced without changing what the package is made of.</desc>
+            <rect x="55" y="30" width="70" height="60" rx="4" class="active"/>
+            <text x="90" y="64" class="active">GLASS</text>
+            <rect x="20" y="40" width="26" height="18" rx="3"/>
+            <text x="33" y="53" style="font-size:9px;">label A</text>
+            <path d="M46 49 H55" />
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: The Stamp Is on the Package</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Think of a value like a package with its material stamped directly on it — glass, plastic, wood. The shipping label (your variable name) is just paper stuck to the outside; you can peel it off, stick a new one on, or put ten labels on ten different packages — none of that changes what the package underneath is actually made of.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">Common misconception: typeof reads code, not the running value</title>
+            <desc id="v5d">A magnifying glass hovers over a line of source code with an X, then over a running value box with a check mark.</desc>
+            <text x="45" y="30" style="font-size:20px;">✕</text>
+            <circle cx="45" cy="55" r="22"/>
+            <text x="45" y="60" style="font-size:9px;">source text</text>
+            <text x="135" y="30" style="font-size:20px;" class="active">✓</text>
+            <circle cx="135" cy="55" r="22" class="active"/>
+            <text x="135" y="60" style="font-size:9px;" class="active">live value</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: typeof Doesn't Read Your Code</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>It's tempting to think <code>typeof someVariable</code> somehow inspects how you wrote the code. It doesn't — it inspects whatever value that expression evaluates to <em>at the exact moment it runs</em>. The same line of code can report a different type at 9am than it does at 9:01am, if the value changed in between.</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 4</strong> — I can name all seven JavaScript primitive types and explain what falls under the single "object" catch-all instead.</li>
+        <li><strong>Objective 2 of 4</strong> — I can explain why a JavaScript variable's type can change over its lifetime, and how that's different from a statically-typed language.</li>
+        <li><strong>Objective 3 of 4</strong> — I can predict what <code>typeof</code> returns for a given value — including the <code>null</code> and function special cases — and explain <em>why</em> each behaves that way, not just recite the answer.</li>
+        <li><strong>Objective 4 of 4</strong> — I can write a "is this actually a usable object" check that isn't fooled by <code>typeof null === "object"</code>.</li>
+      </ol>
     </div>
 
     <hr class="section-divider">
@@ -139,7 +185,7 @@
     <div class="quiz-set" data-quiz-set data-threshold="80">
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">Once a variable is assigned a number, can that same variable later hold a string instead?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">Once a variable is assigned a number, can that same variable later hold a string instead?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab03-pre-0" value="0"> Yes — a variable can hold any type, and that can change over its lifetime</label>
@@ -152,7 +198,7 @@
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">Guess: what does <code>typeof null</code> return?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">Guess: what does <code>typeof null</code> return?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab03-pre-1" value="0"> "null"</label>
@@ -165,7 +211,7 @@
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">Is a function value a fundamentally different type from a plain object, or a special case of one?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Is a function value a fundamentally different type from a plain object, or a special case of one?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab03-pre-2" value="0"> A completely separate fundamental type</label>
@@ -174,6 +220,31 @@
           </div>
           <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
           <p class="quiz-feedback" data-explanation="Functions are objects that happen to be callable — typeof gives them their own label as a convenience, but underneath they're still objects." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">let x = 5; then later x = "hello"; — does that second line cause any kind of type error?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab03-pre-3" value="0"> No — JavaScript never checks or blocks this at all</label>
+            <label><input type="radio" name="lab03-pre-3" value="1"> Yes, it throws a TypeError</label>
+            <label><input type="radio" name="lab03-pre-3" value="2"> Only in strict mode</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="There is no type-checking step in JavaScript that would catch this — a variable will happily hold a completely different type after reassignment." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">Guess: does typeof give arrays their own result, separate from plain objects?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab03-pre-4" value="0"> Yes — arrays report "array"</label>
+            <label><input type="radio" name="lab03-pre-4" value="1"> No — arrays report "object", same as a plain object literal</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Arrays are a specialized kind of object under the hood — typeof only distinguishes primitives and gives functions their own label; everything else object-shaped is just 'object'." role="status" aria-live="polite"></p>
         </div>
       </details>
 
@@ -187,10 +258,19 @@
     <article class="concept-part">
       <h3>"Type" is not a JavaScript invention</h3>
       <p>
-        Every mainstream language has some notion of type — a way of knowing whether a piece of
-        data is a number, text, true/false, or something more structured. What's JavaScript-specific
-        is <em>which</em> types exist, how loosely they're enforced, and what the built-in
-        <code>typeof</code> operator will and won't tell you correctly about them.
+        A <strong>type</strong> is simply a category that tells you what kind of thing a piece of
+        data is, and therefore what you're allowed to do with it — you can add two numbers, but
+        adding two <em>booleans</em> (true/false values) doesn't mean the same thing conceptually.
+        Every mainstream programming language needs some notion of type for exactly this reason:
+        without it, the language (or you) would have no way to know whether an operation on a
+        piece of data even makes sense.
+      </p>
+      <p>
+        What's JavaScript-specific is <em>which</em> types exist, how loosely they're enforced,
+        and what the built-in <code>typeof</code> <strong>operator</strong> — a small piece of
+        syntax, like <code>+</code> or <code>-</code>, that takes a value and produces a result,
+        in this case a string naming that value's type — will and won't tell you correctly about
+        them.
       </p>
       <div class="xlang">
         <div class="xlang-label">Cross-language note</div>
@@ -208,13 +288,46 @@
     <article class="concept-part">
       <h3>Seven primitives, one catch-all</h3>
       <p>
-        JavaScript has exactly seven <strong>primitive</strong> types: <code>string</code>,
-        <code>number</code>, <code>boolean</code>, <code>undefined</code>, <code>null</code>,
-        <code>symbol</code>, and <code>bigint</code>. Everything else — plain objects, arrays,
-        functions, dates, and more — falls under one broad type, <code>object</code>. That split
-        (third mental-model diagram above) matters a lot more once we get to how values are copied
-        and compared (Lab 21), but for now it's just the map of what exists.
+        JavaScript has exactly seven <strong>primitive</strong> types. "Primitive" here just means
+        a value the language treats as a single, indivisible piece of data — you can't reach
+        "inside" it to change a piece of it; any change produces a brand-new value instead. The
+        seven are: <code>string</code> (text), <code>number</code> (both whole and decimal
+        numbers), <code>boolean</code> (<code>true</code>/<code>false</code>), <code>undefined</code>
+        and <code>null</code> (two different flavors of "nothing" — Lab 04 is entirely about that
+        distinction), <code>symbol</code> (a guaranteed-unique value, used as a rare kind of
+        identifier), and <code>bigint</code> (whole numbers too large for the regular
+        <code>number</code> type to represent precisely).
       </p>
+      <p>
+        Everything else in the language — plain <code>{}</code> objects, arrays, functions, dates,
+        and anything else you can build with <code>new</code> or a literal — falls under one
+        single, broad type: <code>object</code>. That split (the third mental-model diagram above)
+        matters a lot more once we get to how values are copied and compared (Lab 21), but for now
+        it's just the map of what exists.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Why does a <code>typeof</code> operator even need to exist?</h3>
+      <p>
+        In a statically-typed language, the compiler already knows every variable's type before
+        the program ever runs, so it can catch a type mistake ahead of time and refuse to compile.
+        JavaScript has no such compile-time check — a variable's type is only knowable by looking
+        at whatever value it currently holds, <em>while the program is running</em>. That's exactly
+        the gap <code>typeof</code> fills: it's a way for your running code to ask, at that exact
+        moment, "what kind of thing am I holding right now?" and branch accordingly. Without it,
+        code that needs to behave differently for a string versus a number would have no reliable
+        way to tell them apart at all.
+      </p>
+      <pre><code>function describe(value) {
+  if (typeof value === "string") {
+    return "a piece of text";
+  }
+  if (typeof value === "number") {
+    return "a number";
+  }
+  return "something else";
+}</code></pre>
     </article>
 
     <article class="concept-part">
@@ -227,10 +340,17 @@
         <li><code>typeof null</code> returns <code>"object"</code>, not <code>"null"</code>. This is
         a bug from the language's original 1995 implementation that was never fixed, because fixing
         it would break existing code across the web. It does not mean <code>null</code> behaves like
-        an object.</li>
+        an object — trying to read a property off <code>null</code> throws an error immediately.</li>
         <li><code>typeof</code> a function returns <code>"function"</code>, even though a function
-        is, underneath, an object. It's a convenience label, not evidence of a separate type.</li>
+        is, underneath, an object (something Lab 11 covers directly). It's a convenience label, not
+        evidence of a separate fundamental type.</li>
       </ol>
+      <p style="margin-bottom: 0;">
+        The practical consequence of quirk #1: a check like <code>typeof x === "object"</code>,
+        meant to mean "x is a real object I can use," will also silently match <code>x = null</code>
+        — which is not something you can actually use like an object. The safe version adds an
+        explicit exclusion: <code>typeof x === "object" && x !== null</code>.
+      </p>
     </article>
 
     <hr class="section-divider">
@@ -255,7 +375,7 @@
           <label class="step-checkbox" title="Mark step 1 complete">
             <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 1/4</div>
+          <div class="step-num">Step 1 of 4</div>
           <div class="step-body">
             <div class="lab-instruction">
               <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
@@ -278,7 +398,7 @@ console.log(typeof function () {});</code></pre>
           <label class="step-checkbox" title="Mark step 2 complete">
             <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 2/4</div>
+          <div class="step-num">Step 2 of 4</div>
           <div class="step-body">
             <p>Write your nine predictions, then reveal.</p>
             <textarea class="predict-box" rows="3" placeholder="My predictions: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -312,7 +432,7 @@ reports that specifically, rather than the more general "object".</code></pre>
           <label class="step-checkbox" title="Mark step 3 complete">
             <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 3/4</div>
+          <div class="step-num">Step 3 of 4</div>
           <div class="step-body">
             <div class="lab-instruction">
               <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
@@ -330,7 +450,7 @@ reports that specifically, rather than the more general "object".</code></pre>
           <label class="step-checkbox" title="Mark step 4 complete">
             <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 4/4</div>
+          <div class="step-num">Step 4 of 4</div>
           <div class="step-body">
             <p>Predict what both new lines report, then run and compare — then answer this comprehension check before moving on: given <code>typeof [1, 2, 3]</code>, why doesn't <code>typeof</code> have a separate <code>"array"</code> result the way it has a separate <code>"function"</code> result?</p>
             <textarea class="predict-box" rows="3" placeholder="Your answer..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -350,6 +470,7 @@ reports that specifically, rather than the more general "object".</code></pre>
         <li>I can explain why <code>typeof null === "object"</code> without calling it "just how JavaScript works" — I know it's a historical bug, not a rule to reason from.</li>
         <li>I know a function is a type of object, not a separate fundamental type, even though <code>typeof</code> labels it specially.</li>
         <li>I know <code>typeof</code> tells me about the current value, not the variable — the same variable name can hold different types over its life.</li>
+        <li>I can write <code>typeof x === "object" && x !== null</code> from memory as the safe version of an object check.</li>
       </ul>
     </div>
 
@@ -357,10 +478,14 @@ reports that specifically, rather than the more general "object".</code></pre>
 
     <!-- ===================== POST-LAB QUIZ ===================== -->
     <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
     <div class="quiz-set" data-quiz-set data-threshold="80">
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">What does typeof [1, 2, 3] return?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">What does typeof [1, 2, 3] return?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab03-post-0" value="0"> "array"</label>
@@ -373,28 +498,54 @@ reports that specifically, rather than the more general "object".</code></pre>
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">Why is typeof null === "object" considered a bug rather than a deliberate design choice?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">You want to check that a value is a real, usable object — not null. Which check is correct?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
-            <label><input type="radio" name="lab03-post-1" value="0"> It comes from a leftover implementation detail from 1995 that was never corrected, since fixing it would break the web</label>
-            <label><input type="radio" name="lab03-post-1" value="1"> null genuinely behaves exactly like an object in every way</label>
-            <label><input type="radio" name="lab03-post-1" value="2"> It was changed intentionally in ES6 to simplify type-checking</label>
+            <label><input type="radio" name="lab03-post-1" value="0"> typeof x === "object"</label>
+            <label><input type="radio" name="lab03-post-1" value="1"> typeof x === "object" && x !== null</label>
+            <label><input type="radio" name="lab03-post-1" value="2"> typeof x === "object" || x === null</label>
           </div>
-          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
-          <p class="quiz-feedback" data-explanation="null has no properties and null.anything throws — it does not act like an object despite the typeof label." role="status" aria-live="polite"></p>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="typeof x === 'object' alone also matches null, which isn't a usable object — the && x !== null exclusion is what makes the check actually safe." role="status" aria-live="polite"></p>
         </div>
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">If a variable currently holds a number, what does that tell you about what it can hold next?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">let value = someCondition ? 42 : "42"; — before running this, can you say for certain what typeof value will be, just by reading the source code?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
-            <label><input type="radio" name="lab03-post-2" value="0"> Nothing — the same variable can be reassigned to any type</label>
-            <label><input type="radio" name="lab03-post-2" value="1"> It's now locked to numbers for its whole lifetime</label>
-            <label><input type="radio" name="lab03-post-2" value="2"> It can only become a string next, not any other type</label>
+            <label><input type="radio" name="lab03-post-2" value="0"> Yes, it's always "number"</label>
+            <label><input type="radio" name="lab03-post-2" value="1"> No — it depends on which branch actually runs, which depends on someCondition's value</label>
+            <label><input type="radio" name="lab03-post-2" value="2"> Yes, JavaScript picks the first branch's type</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="typeof reports the live value, not the source text — you can't know the type from reading the code alone when the value depends on a runtime condition." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Which of these does typeof NOT report as "object": {}, [], null, function(){}?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab03-post-3" value="0"> function(){}  — it reports "function" instead</label>
+            <label><input type="radio" name="lab03-post-3" value="1"> null — it reports "null"</label>
+            <label><input type="radio" name="lab03-post-3" value="2"> [] — it reports "array"</label>
           </div>
           <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
-          <p class="quiz-feedback" data-explanation="Type belongs to the value, not the variable — a variable is just a name currently pointing at some value." role="status" aria-live="polite"></p>
+          <p class="quiz-feedback" data-explanation="{}, [], and null all report 'object' — only functions get a distinct label, even though they're objects underneath too." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">let x = "hello"; then x = 100; — what does typeof x report now, and what would it have reported right before the reassignment?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab03-post-4" value="0"> "number" now; "string" before — typeof always reflects the current value</label>
+            <label><input type="radio" name="lab03-post-4" value="1"> "string" in both cases, since x was first declared as a string</label>
+            <label><input type="radio" name="lab03-post-4" value="2"> It throws an error on reassignment to a different type</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Type belongs to whatever value the variable currently holds — reassigning to a different type is completely normal, and typeof will report whichever value is there right now." role="status" aria-live="polite"></p>
         </div>
       </details>
 
@@ -409,7 +560,7 @@ reports that specifically, rather than the more general "object".</code></pre>
     </p>
 
     <div class="card">
-      <p><strong>1.</strong> If you've used a language with fixed variable types before, what's the biggest adjustment in reasoning this "type belongs to the value, not the variable" model requires?</p>
+      <p><strong>Reflection 1 of 3.</strong> If you've used a language with fixed variable types before, what's the biggest adjustment in reasoning this "type belongs to the value, not the variable" model requires?</p>
       <div class="blur-reflection">
         <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
         <p class="blur-reflection-answer" aria-hidden="true">
@@ -422,7 +573,7 @@ reports that specifically, rather than the more general "object".</code></pre>
     </div>
 
     <div class="card">
-      <p><strong>2.</strong> Now that you know <code>typeof null</code> is wrong, where might you have previously trusted it without noticing?</p>
+      <p><strong>Reflection 2 of 3.</strong> Now that you know <code>typeof null</code> is wrong, where might you have previously trusted it without noticing?</p>
       <div class="blur-reflection">
         <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
         <p class="blur-reflection-answer" aria-hidden="true">
@@ -430,6 +581,19 @@ reports that specifically, rather than the more general "object".</code></pre>
           can access properties on" — a check like that silently also passes for
           <code>x = null</code>, which then throws the moment you try <code>x.someProperty</code>.
           The safe version checks <code>x !== null</code> as well, or checks truthiness first.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> In your own words, explain to an imaginary coworker why "typeof reads the code" is wrong and "typeof reads the live value" is right. What's a one-sentence example that proves it?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          Something like: "if the exact same <code>typeof x</code> line runs twice, once before
+          <code>x</code> is reassigned and once after, it can report two completely different
+          answers — proof that it's inspecting the value at that moment, not anything about how
+          the line itself is written."
         </p>
       </div>
     </div>
@@ -461,9 +625,22 @@ reports that specifically, rather than the more general "object".</code></pre>
       </p>
     </div>
 
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Lab 04 zooms in on one specific corner of this type system: the different ways JavaScript
+        represents "nothing." You now know <code>undefined</code> and <code>null</code> are two of
+        the eight types from today — next we'll see exactly how they differ from each other, and
+        from a name that was never declared at all.
+      </p>
+    </div>
+
     <p style="margin-top:24px;" aria-label="Lab navigation">
       <a href="../index.html">&larr; All labs</a> &nbsp;&middot;&nbsp;
-      <a href="../lab-04-undefined-null-undeclared/index.html">Lab 03 — undefined, null &amp; Undeclared Identifiers &rarr;</a>
+      <a href="../lab-04-undefined-null-undeclared/index.html">Lab 04 — undefined, null &amp; Undeclared Identifiers &rarr;</a>
     </p>
 
   </div>

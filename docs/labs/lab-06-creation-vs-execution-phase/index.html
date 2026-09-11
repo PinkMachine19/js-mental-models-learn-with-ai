@@ -84,7 +84,7 @@
             <text x="145" y="98">run</text>
           </svg>
         </div>
-        <h3>Two Passes, Same Code</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>Two Passes, Same Code</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>Nothing runs during the first pass — it only registers what exists. The second pass is the one that actually executes line by line.</p></div>
       </div>
@@ -102,7 +102,7 @@
             <text x="132" y="86" class="active">function f(){}</text>
           </svg>
         </div>
-        <h3>Registered Empty vs Registered Full</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>Registered Empty vs Registered Full</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>Both get a slot in pass 1, but a <code>var</code> starts empty while a function declaration starts already holding the whole function.</p></div>
       </div>
@@ -121,11 +121,58 @@
             <text x="165" y="24" class="active">✓</text>
           </svg>
         </div>
-        <h3>Hoisting Is Not Teleportation</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>Hoisting Is Not Teleportation</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>The lines of your file never move. Only the registration step happens before execution reaches them — it just looks like the declaration "moved up."</p></div>
       </div>
 
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: setting up a restaurant before it opens</title>
+            <desc id="v4d">A closed restaurant with staff and menu already set up behind the door, versus the open sign and customers being served.</desc>
+            <rect x="15" y="15" width="70" height="90" rx="4" class="active"/>
+            <text x="50" y="50" class="active" style="font-size:8px;">staff hired</text>
+            <text x="50" y="70" class="active" style="font-size:8px;">menu printed</text>
+            <text x="50" y="95" class="active" style="font-size:8px;">CLOSED</text>
+            <rect x="95" y="15" width="70" height="90" rx="4"/>
+            <text x="130" y="50" style="font-size:8px;">customers</text>
+            <text x="130" y="70" style="font-size:8px;">served</text>
+            <text x="130" y="95" style="font-size:8px;">OPEN</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: Setup Before Opening</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Before a restaurant opens its doors, the staff are already hired and the menu is already printed — that's the setup phase, done with the doors still closed. Only once setup is complete does the "open" sign go up and customers actually get served, in order, one at a time. The creation phase is the closed-doors setup; the execution phase is the open sign going up.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">Misconception: hoisting is a feature to lean on, not a side effect to understand</title>
+            <desc id="v5d">A red X over a hand deliberately reaching for something out of order, a green check over a hand reading top to bottom.</desc>
+            <text x="45" y="35" style="font-size:20px;">✕</text>
+            <text x="45" y="65" style="font-size:8px;">rely on early access</text>
+            <text x="135" y="35" style="font-size:20px;" class="active">✓</text>
+            <text x="135" y="65" style="font-size:8px;" class="active">understand, don't lean on it</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: Hoisting Isn't a Feature to Use</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Knowing hoisting exists is essential for reading other people's code correctly. It is not a recommendation to deliberately write code that depends on calling things before they "appear" — that habit breaks the moment a function declaration becomes an expression, an arrow function, or moves into a conditional block (Lab 07 shows exactly how differently <code>let</code>/<code>const</code> behave here).</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 4</strong> — I can describe the creation phase and execution phase as two distinct passes over the same code, not one single pass.</li>
+        <li><strong>Objective 2 of 4</strong> — I can predict what a <code>var</code>-declared variable holds, and what calling a function declaration returns, when either is used before its own line in the file runs.</li>
+        <li><strong>Objective 3 of 4</strong> — I can explain why converting a function declaration into a function expression changes what happens when it's called early.</li>
+        <li><strong>Objective 4 of 4</strong> — I can explain "hoisting" accurately, without describing it as code physically moving.</li>
+      </ol>
     </div>
 
     <hr class="section-divider">
@@ -138,7 +185,7 @@
     <div class="quiz-set" data-quiz-set data-threshold="80">
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">You log a var-declared variable on the line before its declaration and assignment. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">You log a var-declared variable on the line before its declaration and assignment. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab06-pre-0" value="0"> It throws a <code>ReferenceError</code></label>
@@ -151,7 +198,7 @@
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">You call a function declaration on the line before its definition appears in the file. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">You call a function declaration on the line before its definition appears in the file. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab06-pre-1" value="0"> It works normally</label>
@@ -164,7 +211,7 @@
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">Does JavaScript actually reposition your declarations to the top of the file before running it?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Does JavaScript actually reposition your declarations to the top of the file before running it?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab06-pre-2" value="0"> Yes, it physically rewrites the file order</label>
@@ -172,6 +219,30 @@
           </div>
           <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
           <p class="quiz-feedback" data-explanation="Nothing moves. Only the registration step happens before execution — the effect just looks like movement." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Two function declarations, A and B, each call each other, and B is written above A in the file even though A is called first. Does this work?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab06-pre-3" value="0"> Yes — both are fully registered with their complete function bodies before execution starts, regardless of write order</label>
+            <label><input type="radio" name="lab06-pre-3" value="1"> No — B must be written after A since A is called first</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Function declarations are fully hoisted with their entire function value, so two of them can call each other regardless of which order they're written in." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">var x = 1; appears twice in the same scope (var x = 1; ... var x = 2;). Does the second one cause an error?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab06-pre-4" value="0"> No — it's just another assignment to the same registered name</label>
+            <label><input type="radio" name="lab06-pre-4" value="1"> Yes — you can't declare the same var twice</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The creation phase registers a var name once per scope no matter how many times it appears — a repeated var statement is harmless, just a normal reassignment." role="status" aria-live="polite"></p>
         </div>
       </details>
 
@@ -191,6 +262,29 @@
         it finds — before a single line has actually executed. Only after that's done does the
         <strong>execution phase</strong> begin, running your code top to bottom for real.
       </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Why register everything up front, in a separate pass?</h3>
+      <p>
+        Consider two functions that need to call <em>each other</em> — function A calls function B
+        somewhere in its body, and function B calls function A somewhere in its. If the engine only
+        recognized a function's existence once execution physically reached its definition line,
+        this kind of mutual reference would be nearly impossible to write, since whichever one is
+        defined second wouldn't exist yet when the first one's definition is being read. Registering
+        every function declaration's full value up front, before any code runs, sidesteps that
+        problem entirely — by the time any code executes, every function declaration in that scope
+        already exists, regardless of the order they were written in.
+      </p>
+      <pre><code>function isEven(n) {
+  if (n === 0) return true;
+  return isOdd(n - 1); // isOdd is used here...
+}
+
+function isOdd(n) {   // ...but only defined below
+  if (n === 0) return false;
+  return isEven(n - 1);
+}</code></pre>
     </article>
 
     <article class="concept-part">
@@ -232,7 +326,7 @@
           <label class="step-checkbox" title="Mark step 1 complete">
             <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 1/4</div>
+          <div class="step-num">Step 1 of 4</div>
           <div class="step-body">
             <div class="lab-instruction">
               <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
@@ -254,7 +348,7 @@ function announce() {
           <label class="step-checkbox" title="Mark step 2 complete">
             <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 2/4</div>
+          <div class="step-num">Step 2 of 4</div>
           <div class="step-body">
             <p>Predict what <code>console.log(nickname)</code> prints, and what calling <code>announce()</code> does at that point in the file.</p>
             <textarea class="predict-box" rows="3" placeholder="My predictions: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -282,7 +376,7 @@ that moment -- still undefined.</code></pre>
           <label class="step-checkbox" title="Mark step 3 complete">
             <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 3/4</div>
+          <div class="step-num">Step 3 of 4</div>
           <div class="step-body">
             <div class="lab-instruction">
               <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
@@ -301,7 +395,7 @@ that moment -- still undefined.</code></pre>
           <label class="step-checkbox" title="Mark step 4 complete">
             <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 4/4</div>
+          <div class="step-num">Step 4 of 4</div>
           <div class="step-body">
             <p>Predict: does <code>announce()</code> still work at the top of the file now, or does something change? Run it and compare, then answer this comprehension check: in your own words, why does a function <em>declaration</em> survive being called early, while a function <em>expression</em> assigned to a <code>var</code> does not?</p>
             <textarea class="predict-box" rows="3" placeholder="Your answer..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -320,6 +414,7 @@ that moment -- still undefined.</code></pre>
         <li>I can describe the creation phase and execution phase as two separate passes, not one.</li>
         <li>I know a <code>var</code> registers as <code>undefined</code>, while a function declaration registers with its full value.</li>
         <li>I know "hoisting" doesn't move code — it's just that registration happens before execution.</li>
+        <li>I can explain why two mutually-calling function declarations work regardless of which one is written first.</li>
       </ul>
     </div>
 
@@ -327,23 +422,27 @@ that moment -- still undefined.</code></pre>
 
     <!-- ===================== POST-LAB QUIZ ===================== -->
     <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
     <div class="quiz-set" data-quiz-set data-threshold="80">
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">What's registered during the creation phase for a var declaration, specifically?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">console.log(typeof mystery); var mystery = 5; — what does this log? (Tie this back to Lab 03's typeof.)</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
-            <label><input type="radio" name="lab06-post-0" value="0"> Just the name, set to <code>undefined</code></label>
-            <label><input type="radio" name="lab06-post-0" value="1"> The name and its final assigned value</label>
-            <label><input type="radio" name="lab06-post-0" value="2"> Nothing — var isn't registered until its line runs</label>
+            <label><input type="radio" name="lab06-post-0" value="0"> "undefined"</label>
+            <label><input type="radio" name="lab06-post-0" value="1"> "number"</label>
+            <label><input type="radio" name="lab06-post-0" value="2"> It throws a ReferenceError</label>
           </div>
           <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
-          <p class="quiz-feedback" data-explanation="Only the name and a placeholder undefined value — the real value is assigned later, during execution." role="status" aria-live="polite"></p>
+          <p class="quiz-feedback" data-explanation="mystery is registered as undefined during the creation phase, so typeof reports 'undefined' — the exact same mechanism as this lab's nickname example, applied through Lab 03's typeof operator." role="status" aria-live="polite"></p>
         </div>
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">Why did converting announce from a function declaration to a var-assigned function expression change the outcome?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">Why did converting announce from a function declaration to a var-assigned function expression change the outcome?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab06-post-1" value="0"> Because a var only registers as undefined, not the function itself, until its assignment line runs</label>
@@ -356,7 +455,7 @@ that moment -- still undefined.</code></pre>
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">Does JavaScript literally move declarations to the top of the file at runtime?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Does JavaScript literally move declarations to the top of the file at runtime?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab06-post-2" value="0"> No — only the registration step happens early; the code stays exactly where it's written</label>
@@ -364,6 +463,32 @@ that moment -- still undefined.</code></pre>
           </div>
           <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
           <p class="quiz-feedback" data-explanation="Nothing is relocated — the two-phase process just produces an effect that looks like movement." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Would the isEven/isOdd mutual-recursion example from the Concept section work if isOdd were rewritten as a var-assigned function expression instead of a declaration?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab06-post-3" value="0"> No — isOdd would still be undefined at the point isEven's body tries to call it, unless isEven is only called after isOdd's assignment line has run</label>
+            <label><input type="radio" name="lab06-post-3" value="1"> Yes, it would work identically either way</label>
+            <label><input type="radio" name="lab06-post-3" value="2"> It would throw a syntax error</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Only full function declarations register their complete value up front — a var-assigned function expression is undefined until its own line executes, exactly like announce in this lab's experiment." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">Which happens first: the creation phase finishing for the whole file's top-level code, or the very first line of that code actually executing?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab06-post-4" value="0"> The creation phase always finishes completely before any execution begins</label>
+            <label><input type="radio" name="lab06-post-4" value="1"> They happen interleaved, line by line</label>
+            <label><input type="radio" name="lab06-post-4" value="2"> Execution starts first, and registration happens lazily as each name is used</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The creation phase is a complete, separate pass that finishes before the execution phase starts — that ordering is exactly what makes hoisting-style behavior possible." role="status" aria-live="polite"></p>
         </div>
       </details>
 
@@ -378,7 +503,7 @@ that moment -- still undefined.</code></pre>
     </p>
 
     <div class="card">
-      <p><strong>1.</strong> Even though calling a function declaration before its line "works," why might relying on that be a risky habit?</p>
+      <p><strong>Reflection 1 of 3.</strong> Even though calling a function declaration before its line "works," why might relying on that be a risky habit?</p>
       <div class="blur-reflection">
         <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
         <p class="blur-reflection-answer" aria-hidden="true">
@@ -391,13 +516,26 @@ that moment -- still undefined.</code></pre>
     </div>
 
     <div class="card">
-      <p><strong>2.</strong> How does the two-phase model explain why declaring the same <code>var</code> name twice in one scope doesn't cause an error?</p>
+      <p><strong>Reflection 2 of 3.</strong> How does the two-phase model explain why declaring the same <code>var</code> name twice in one scope doesn't cause an error?</p>
       <div class="blur-reflection">
         <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
         <p class="blur-reflection-answer" aria-hidden="true">
           The creation phase only registers a name once per scope, regardless of how many times
           <code>var</code> mentions it — so a second <code>var</code> statement for the same name
           isn't creating a new binding, it's just another assignment to the one that already exists.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> Before this lab, would you have predicted that the mutual-recursion example (isEven/isOdd) could work at all, given that each function references the other before it's "been defined" in file order? What does that reveal about how you were thinking about "defined"?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          Many learners assume "defined" means "the engine has reached that line while running" —
+          a purely execution-phase idea. This lab shows "defined" for a function declaration
+          actually happens earlier, during creation, which is exactly what makes mutual references
+          between two function declarations possible at all.
         </p>
       </div>
     </div>
@@ -428,9 +566,22 @@ that moment -- still undefined.</code></pre>
       </p>
     </div>
 
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Lab 07 asks what happens when <code>let</code> and <code>const</code> go through this same
+        creation phase instead of <code>var</code> — and shows they land in a much stricter,
+        locked state called the Temporal Dead Zone, directly explained by the two-phase model you
+        just built.
+      </p>
+    </div>
+
     <p style="margin-top:24px;" aria-label="Lab navigation">
       <a href="../index.html">&larr; All labs</a> &nbsp;&middot;&nbsp;
-      <a href="../lab-07-var-let-const-tdz/index.html">Lab 06 — var, let, const &amp; the Temporal Dead Zone &rarr;</a>
+      <a href="../lab-07-var-let-const-tdz/index.html">Lab 07 — var, let, const &amp; the Temporal Dead Zone &rarr;</a>
     </p>
 
   </div>

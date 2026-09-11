@@ -84,7 +84,7 @@
             <text x="132" y="86" class="active">let / const</text>
           </svg>
         </div>
-        <h3>Registered Open vs Registered Locked</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>Registered Open vs Registered Locked</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>Both get a slot in the creation phase. <code>var</code>'s slot is immediately readable; <code>let</code>/<code>const</code>'s slot is locked until its own declaration line runs.</p></div>
       </div>
@@ -102,7 +102,7 @@
             <text x="100" y="30">declaration line</text>
           </svg>
         </div>
-        <h3>The TDZ Is a Span of Time</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>The TDZ Is a Span of Time</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p>From the start of the block until its own declaration line executes, a <code>let</code>/<code>const</code> name exists but touching it throws.</p></div>
       </div>
@@ -121,11 +121,57 @@
             <text x="145" y="95">escapes to here</text>
           </svg>
         </div>
-        <h3>Block Scope vs Function Scope</h3>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>Block Scope vs Function Scope</h3>
         <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
         <div hidden><p><code>let</code>/<code>const</code> stay contained to the block they're declared in. <code>var</code> ignores block boundaries and belongs to the whole enclosing function (or the global scope).</p></div>
       </div>
 
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: a locked drawer with a countdown timer</title>
+            <desc id="v4d">A drawer with a visible lock and a small countdown timer; once the timer reaches the declaration line, the lock pops open.</desc>
+            <rect x="55" y="30" width="70" height="55" rx="4" class="active"/>
+            <text x="90" y="62" class="active" style="font-size:20px;">🔒</text>
+            <circle cx="140" cy="35" r="16"/>
+            <text x="140" y="40" style="font-size:9px;">timer</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: A Drawer With a Timer</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Imagine a drawer that exists — you can see it's there — but it's locked with a countdown timer that only unlocks when execution reaches the drawer's own declaration line. Try to open it early and it doesn't just refuse quietly; it sets off an alarm (a thrown error) instead.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">Misconception: a TDZ error looks like an undeclared-name error but is not the same</title>
+            <desc id="v5d">Two similar-looking error boxes with a magnifying glass showing they have different causes underneath.</desc>
+            <rect x="15" y="30" width="70" height="40" rx="4"/>
+            <text x="50" y="45" style="font-size:8px;">"before</text>
+            <text x="50" y="57" style="font-size:8px;">initialization"</text>
+            <rect x="95" y="30" width="70" height="40" rx="4" class="active"/>
+            <text x="130" y="45" style="font-size:8px;" class="active">"is not</text>
+            <text x="130" y="57" style="font-size:8px;" class="active">defined"</text>
+            <text x="90" y="95" style="font-size:9px;">both are ReferenceErrors — different causes</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: Two Different ReferenceErrors</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Both a TDZ violation and Lab 04's undeclared-identifier case throw a <code>ReferenceError</code>, which makes them easy to conflate. They're not the same failure: the TDZ error means the name exists but isn't initialized yet; the undeclared-name error means the name was never registered anywhere at all.</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 4</strong> — I can explain the Temporal Dead Zone as a span of time within a block, not a location in the source code.</li>
+        <li><strong>Objective 2 of 4</strong> — I can predict, for a given point in the code, whether a <code>var</code>-, <code>let</code>-, or <code>const</code>-declared variable is currently readable.</li>
+        <li><strong>Objective 3 of 4</strong> — I can distinguish a TDZ <code>ReferenceError</code> from an undeclared-identifier <code>ReferenceError</code> (Lab 04) by what actually caused each one.</li>
+        <li><strong>Objective 4 of 4</strong> — I can explain, in concrete terms, why modern style guides prefer <code>const</code>/<code>let</code> over <code>var</code>.</li>
+      </ol>
     </div>
 
     <hr class="section-divider">
@@ -138,7 +184,7 @@
     <div class="quiz-set" data-quiz-set data-threshold="80">
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">You read a let-declared variable on the line before its own declaration, in the same block. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">You read a let-declared variable on the line before its own declaration, in the same block. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab07-pre-0" value="0"> It logs <code>undefined</code>, same as <code>var</code></label>
@@ -151,7 +197,7 @@
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">A var is declared inside an if-block. Can it be read from outside that if-block, but still inside the same function?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">A var is declared inside an if-block. Can it be read from outside that if-block, but still inside the same function?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab07-pre-1" value="0"> Yes</label>
@@ -163,7 +209,7 @@
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">Same question, but with a let declared inside that if-block instead. Readable from outside it?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Same question, but with a let declared inside that if-block instead. Readable from outside it?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab07-pre-2" value="0"> Yes</label>
@@ -171,6 +217,31 @@
           </div>
           <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
           <p class="quiz-feedback" data-explanation="let is genuinely block-scoped — it does not exist at all outside the block it's declared in." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">const total = 100; is followed later by total = 200;. What happens?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-pre-3" value="0"> It throws a TypeError — const cannot be reassigned</label>
+            <label><input type="radio" name="lab07-pre-3" value="1"> It works fine; total becomes 200</label>
+            <label><input type="radio" name="lab07-pre-3" value="2"> It silently ignores the second line</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="const locks the binding itself against reassignment — attempting it throws immediately, rather than being silently ignored or allowed." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">Two separate, nested if-blocks each declare their own let count = 0;. Do they refer to the same variable or two independent ones?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-pre-4" value="0"> Two completely independent variables, one per block</label>
+            <label><input type="radio" name="lab07-pre-4" value="1"> The same variable, since they share the name "count"</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Each block gets its own scope, so each let count is a distinct binding, even though the name is identical." role="status" aria-live="polite"></p>
         </div>
       </details>
 
@@ -216,11 +287,27 @@
     <article class="concept-part">
       <h3>Scope: function-wide vs block-contained</h3>
       <p>
-        The second difference is scope shape. <code>var</code> belongs to the nearest enclosing
-        function (or the global scope if there is none) — it ignores <code>if</code>/<code>for</code>/
-        other block boundaries entirely. <code>let</code> and <code>const</code> are genuinely
-        <strong>block-scoped</strong>: they exist only inside the <code>{ }</code> they were
-        declared in.
+        The second difference is scope shape. A <strong>block</strong> is simply any region of
+        code wrapped in <code>{ }</code> — the body of an <code>if</code>, a <code>for</code> loop,
+        or just a bare pair of braces on their own. <code>var</code> belongs to the nearest
+        enclosing <em>function</em> (or the global scope if there is none) — it ignores block
+        boundaries entirely. <code>let</code> and <code>const</code> are genuinely
+        <strong>block-scoped</strong>: they exist only inside the specific <code>{ }</code> they
+        were declared in, and stop existing entirely once that block ends.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>const adds one more rule on top: the binding itself is locked</h3>
+      <p>
+        Everything above about the TDZ and block scope applies equally to <code>let</code> and
+        <code>const</code> — they share the same creation-phase behavior. <code>const</code> adds
+        one additional restriction: once its declaration line runs and assigns a value, that
+        specific name can never be reassigned to point at a different value again. Attempting to
+        do so throws <code>TypeError: Assignment to constant variable</code>, immediately, not
+        silently. (This locks the <em>binding</em> — the name-to-value connection — not necessarily
+        the contents of an object the binding points at; a later lab on objects covers that
+        distinction directly.)
       </p>
     </article>
 
@@ -246,7 +333,7 @@
           <label class="step-checkbox" title="Mark step 1 complete">
             <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 1/4</div>
+          <div class="step-num">Step 1 of 4</div>
           <div class="step-body">
             <div class="lab-instruction">
               <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
@@ -268,7 +355,7 @@ console.log("after declaration:", favoriteColor);</code></pre>
           <label class="step-checkbox" title="Mark step 2 complete">
             <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 2/4</div>
+          <div class="step-num">Step 2 of 4</div>
           <div class="step-body">
             <p>Predict what the <code>catch</code> block logs, then reveal.</p>
             <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -295,7 +382,7 @@ name and it becomes a normal, readable variable.</code></pre>
           <label class="step-checkbox" title="Mark step 3 complete">
             <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 3/4</div>
+          <div class="step-num">Step 3 of 4</div>
           <div class="step-body">
             <div class="lab-instruction">
               <p>// Start a fresh snippet. Type it from these comments, don't paste finished code.</p>
@@ -316,7 +403,7 @@ name and it becomes a normal, readable variable.</code></pre>
           <label class="step-checkbox" title="Mark step 4 complete">
             <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
           </label>
-          <div class="step-num">Step 4/4</div>
+          <div class="step-num">Step 4 of 4</div>
           <div class="step-body">
             <p>Predict which of the two reads (outside the block) succeeds and which throws. Run it and compare, then answer this comprehension check: is the error you get for <code>guestListLength</code> here the same kind of error as reading it early inside the TDZ, or a different one — and why?</p>
             <textarea class="predict-box" rows="3" placeholder="Your answer..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px;"></textarea>
@@ -335,6 +422,7 @@ name and it becomes a normal, readable variable.</code></pre>
         <li>I can explain the TDZ as a span of time within a block, not a location in the source code.</li>
         <li>I know <code>var</code> ignores block boundaries; <code>let</code>/<code>const</code> are genuinely trapped inside them.</li>
         <li>I can tell apart a TDZ <code>ReferenceError</code> (name exists, not yet initialized) from an undeclared-name <code>ReferenceError</code> (name never exists there at all, from Lab 04).</li>
+        <li>I know <code>const</code>'s reassignment lock is a separate rule from the TDZ/block-scope behavior it shares with <code>let</code>.</li>
       </ul>
     </div>
 
@@ -342,10 +430,14 @@ name and it becomes a normal, readable variable.</code></pre>
 
     <!-- ===================== POST-LAB QUIZ ===================== -->
     <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
     <div class="quiz-set" data-quiz-set data-threshold="80">
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 1</span><span class="quiz-prompt">What state does a let variable start in during the creation phase?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">What state does a let variable start in during the creation phase?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab07-post-0" value="0"> undefined, same as var</label>
@@ -358,7 +450,7 @@ name and it becomes a normal, readable variable.</code></pre>
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 2</span><span class="quiz-prompt">A let is declared inside an if-block. Can code after the block's closing brace read it successfully?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">A let is declared inside an if-block. Can code after the block's closing brace read it successfully?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab07-post-1" value="0"> Yes, same as var</label>
@@ -370,7 +462,7 @@ name and it becomes a normal, readable variable.</code></pre>
       </details>
 
       <details class="card quiz-card" data-quiz>
-        <summary><span class="quiz-label">Question 3</span><span class="quiz-prompt">What's the practical difference between var's "silent undefined" and let/const's TDZ error, when something's read too early?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">What's the practical difference between var's "silent undefined" and let/const's TDZ error, when something's read too early?</span><span class="quiz-expand-hint">Open question</span></summary>
         <div class="quiz-card-body">
           <div class="answers">
             <label><input type="radio" name="lab07-post-2" value="0"> There is no difference</label>
@@ -379,6 +471,32 @@ name and it becomes a normal, readable variable.</code></pre>
           </div>
           <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
           <p class="quiz-feedback" data-explanation="This is the actual practical payoff of the TDZ — catching a class of bugs at the source instead of letting them silently produce undefined." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">const guestListLength = 4; is followed by guestListLength = 5;. What happens, and is this the TDZ or a different rule?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-post-3" value="0"> Throws TypeError — a separate rule, the reassignment lock, not the TDZ</label>
+            <label><input type="radio" name="lab07-post-3" value="1"> Throws the same "before initialization" ReferenceError as the TDZ</label>
+            <label><input type="radio" name="lab07-post-3" value="2"> Works fine, since the variable was already initialized</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The TDZ only governs reading before initialization; const's reassignment lock is a completely separate rule that applies after initialization, whenever you try to assign a new value." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">A colleague says "let and const solve exactly the same problem as var, just with new keywords." Based on this lab, what's wrong with that claim?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab07-post-4" value="0"> They solve two genuinely different problems on top of var's — real block scope, and a loud-failure TDZ instead of a silent undefined</label>
+            <label><input type="radio" name="lab07-post-4" value="1"> Nothing is wrong with that claim — they're purely a renaming</label>
+            <label><input type="radio" name="lab07-post-4" value="2"> let and const are only different in that they're faster than var</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Block scoping and the TDZ are both genuine behavioral differences from var, not cosmetic renaming — this whole lab was built around demonstrating exactly those two differences." role="status" aria-live="polite"></p>
         </div>
       </details>
 
@@ -393,7 +511,7 @@ name and it becomes a normal, readable variable.</code></pre>
     </p>
 
     <div class="card">
-      <p><strong>1.</strong> Given what you now know, why might modern style guides recommend <code>const</code> by default, <code>let</code> only when reassignment is needed, and <code>var</code> essentially never?</p>
+      <p><strong>Reflection 1 of 3.</strong> Given what you now know, why might modern style guides recommend <code>const</code> by default, <code>let</code> only when reassignment is needed, and <code>var</code> essentially never?</p>
       <div class="blur-reflection">
         <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
         <p class="blur-reflection-answer" aria-hidden="true">
@@ -407,13 +525,28 @@ name and it becomes a normal, readable variable.</code></pre>
     </div>
 
     <div class="card">
-      <p><strong>2.</strong> Would you rather debug a silent <code>undefined</code> from <code>var</code>, or a loud TDZ error from <code>let</code>? Why?</p>
+      <p><strong>Reflection 2 of 3.</strong> Would you rather debug a silent <code>undefined</code> from <code>var</code>, or a loud TDZ error from <code>let</code>? Why?</p>
       <div class="blur-reflection">
         <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
         <p class="blur-reflection-answer" aria-hidden="true">
           Most developers prefer the loud error — it points directly at the exact line and reason,
           versus an <code>undefined</code> that might not cause a visible problem until much later
           in the program, far from where the actual mistake was made.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> Looking back across Labs 03 through 07 as a group: how did today's lab build on the two-phase creation/execution model from Lab 06, and how did that in turn depend on the execution-context model from Lab 05? Trace the chain in your own words.</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          Lab 05 established that every function call gets its own execution context. Lab 06 opened
+          that context up and showed it's built in two passes — a creation phase, then an execution
+          phase. This lab took that exact two-phase model and asked "what if a name registers in a
+          <em>locked</em> state during the creation phase instead of an open one" — which is
+          precisely what <code>let</code>/<code>const</code> do. Each lab in this five-lab group
+          answered a question that only made sense because of the one before it.
         </p>
       </div>
     </div>
@@ -437,11 +570,25 @@ name and it becomes a normal, readable variable.</code></pre>
       <p style="margin-bottom: 0;">
         <code>let</code> and <code>const</code> go through the same creation-phase registration as
         <code>var</code>, but land in a locked, block-scoped state (the Temporal Dead Zone) instead
-        of an open, function-scoped <code>undefined</code>.
+        of an open, function-scoped <code>undefined</code> — plus <code>const</code>'s separate
+        reassignment lock on top.
       </p>
       <p class="concern-relate" style="margin-bottom: 0;">
         <strong>Relates to:</strong> ◎ Names &amp; Scope (2 of 10) — three declaration forms,
         three different answers to "where is this name visible, and when does it become usable."
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        That completes the first five-lab arc — from a single execution context on the call stack,
+        through how it's built in two phases, to the specific rules three different declaration
+        keywords follow inside that model. Lab 08 picks up a related but new thread: the global
+        object these top-level declarations actually attach to (or don't).
       </p>
     </div>
 
