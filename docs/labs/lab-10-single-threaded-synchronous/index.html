@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 10 — Single-Threaded, Synchronous Execution — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-09-lexical-environment-scope-chain/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; next lab &rarr; <em>(Lab 11 — not written yet)</em>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Foundation</span>
+      <span class="badge badge-current">Lab 10</span>
+    </div>
+    <h1>Single-Threaded, Synchronous Execution</h1>
+    <p class="subtitle">
+      A short but load-bearing lab: JavaScript can only ever do one thing at a time. Every lab
+      since Lab 05 has quietly relied on this — now it becomes explicit.
+    </p>
+
+    <div class="build-state">
+      <strong>What this lab produces:</strong> no files, no commit — a pure concept lab. You'll run
+      one short snippet in a console or with <code>node</code>.
+    </div>
+
+    <div class="concept-type">Concept type: <strong>Common / Universal Concept</strong></div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="concern-badge">
+        <div class="concern-glyph">▶</div>
+        <div class="concern-text">
+          <span class="concern-name">EXECUTION</span>
+          <span class="concern-index">10 of 10</span>
+        </div>
+      </div>
+      <div class="concern-badge secondary">
+        <div class="concern-glyph">⏱</div>
+        <div class="concern-text">
+          <span class="concern-name">ASYNCHRONY &amp; CONCURRENCY</span>
+          <span class="concern-index">9 of 10</span>
+        </div>
+      </div>
+    </div>
+    <p class="subtitle" style="margin-top: 10px;">
+      This constraint on execution is exactly what will later shape JavaScript's entire answer to
+      "how do we deal with waiting on something."
+    </p>
+
+    <!-- ===================== MENTAL MODELS (SVG) ===================== -->
+    <h2>Mental Models</h2>
+    <div class="visual-grid">
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v1t v1d">
+            <title id="v1t">One call stack means one thing running, ever</title>
+            <desc id="v1d">A single stack of trays with a spotlight on only the top one; no second stack exists anywhere in the diagram.</desc>
+            <rect x="60" y="30" width="60" height="70" rx="4"/>
+            <rect x="60" y="26" width="60" height="20" rx="4" class="active"/>
+            <text x="90" y="40" class="active" style="font-size:8px;">running</text>
+            <text x="90" y="14" style="font-size:8px;">exactly one stack, always</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>One Stack, One Active Thing, Always</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>There's no second call stack running somewhere else in parallel. Every lab so far has really been describing the only execution path JavaScript ever has.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v2t v2d">
+            <title id="v2t">Synchronous means each line fully finishes before the next starts</title>
+            <desc id="v2d">A row of three sequential boxes, each one lighting up in turn only after the previous one fully completes.</desc>
+            <rect x="15" y="45" width="45" height="30" rx="4" class="active"/>
+            <rect x="70" y="45" width="45" height="30" rx="4"/>
+            <rect x="125" y="45" width="45" height="30" rx="4"/>
+            <text x="37" y="64" class="active" style="font-size:8px;">line 1</text>
+            <text x="92" y="64" style="font-size:8px;">line 2</text>
+            <text x="147" y="64" style="font-size:8px;">line 3</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>Synchronous = Fully Finish, Then Advance</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Each line of code runs to completion before the engine even considers the next one — there's no partial overlap, no "starting the next line a little early."</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v3t v3d">
+            <title id="v3t">A long-running loop blocks everything else, including timers</title>
+            <desc id="v3d">A busy spinning gear occupying the single thread, with a timer and a click event both waiting outside, unable to get in.</desc>
+            <circle cx="90" cy="60" r="30" class="active"/>
+            <text x="90" y="64" class="active" style="font-size:8px;">busy loop</text>
+            <text x="30" y="20" style="font-size:8px;">timer, waiting</text>
+            <text x="150" y="105" style="font-size:8px;">click, waiting</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>A Busy Loop Blocks Everything</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Since there's only one thread, a synchronous block that takes a long time to run doesn't just delay other JavaScript — it delays timers, click handling, and page rendering too, all of which share that same single thread.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: a single cashier with one register</title>
+            <desc id="v4d">A single cashier serving one customer at the register, with a line of other customers waiting their turn, none served simultaneously.</desc>
+            <rect x="65" y="35" width="50" height="45" rx="4" class="active"/>
+            <text x="90" y="60" class="active" style="font-size:8px;">being served</text>
+            <circle cx="30" cy="95" r="10"/>
+            <circle cx="150" cy="95" r="10"/>
+            <text x="90" y="102" style="font-size:7px;">waiting in line</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: One Cashier, One Register</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A single cashier can only ever help one customer at a time, start to finish, no matter how long the line behind them gets. Every other customer simply waits their turn — nobody gets served "a little bit" in parallel.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">Misconception: the word async does not create a second thread</title>
+            <desc id="v5d">A red X over two parallel lanes, a green check over one single lane with a pause icon inserted into it.</desc>
+            <text x="45" y="35" style="font-size:20px;">✕</text>
+            <text x="45" y="65" style="font-size:8px;">two lanes</text>
+            <text x="135" y="35" style="font-size:20px;" class="active">✓</text>
+            <text x="135" y="65" style="font-size:8px;" class="active">one lane, pauses</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: "Async" ≠ a Second Thread</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Seeing the word <code>async</code> in code can suggest something is now running in parallel. It isn't — JavaScript still has exactly one thread and one call stack. What "async" code actually does with that single thread is the subject of several labs much later in this curriculum.</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 3</strong> — I can state, precisely, what "single-threaded" and "synchronous" each mean, and explain that they're two related but distinct properties.</li>
+        <li><strong>Objective 2 of 3</strong> — I can predict what happens to a scheduled timer callback while a long synchronous block is still running.</li>
+        <li><strong>Objective 3 of 3</strong> — I can explain why the word <code>async</code> in JavaScript does not mean "runs on a separate thread."</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PRE-LAB QUIZ ===================== -->
+    <h2>Pre-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Answer from intuition first.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">setTimeout(fn, 0) schedules fn to run after 0 milliseconds. Does that mean fn runs immediately, interrupting whatever code is currently running?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-pre-0" value="0"> No — it can only run once the currently executing synchronous code finishes completely</label>
+            <label><input type="radio" name="lab10-pre-0" value="1"> Yes, 0ms means it runs right away, interrupting anything in progress</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Even a 0ms delay only means 'as soon as possible' -- and 'as soon as possible' still requires the single thread to be free first." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">A synchronous loop takes 5 seconds to finish. During those 5 seconds, can a user's click on the page be handled?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-pre-1" value="0"> No — the single thread is completely occupied by the loop the whole time</label>
+            <label><input type="radio" name="lab10-pre-1" value="1"> Yes, clicks are handled on a separate thread</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Click handling shares the exact same single thread as your JavaScript -- a busy synchronous block genuinely blocks everything else." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Does marking a function async cause its code to run on a separate thread from the rest of the program?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-pre-2" value="0"> No — there is still only one thread, async or not</label>
+            <label><input type="radio" name="lab10-pre-2" value="1"> Yes, async functions get their own thread</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The word async changes how a function's completion is represented, not how many threads exist -- JavaScript remains single-threaded regardless." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Can two ordinary (non-async) JavaScript functions ever be mid-execution at the exact same instant?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-pre-3" value="0"> No, never — this is the same rule established back in Lab 05</label>
+            <label><input type="radio" name="lab10-pre-3" value="1"> Yes, if neither one calls the other</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="One call stack means exactly one context is ever active, regardless of whether the two functions are related to each other at all." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">If a CPU-heavy synchronous loop runs inside a webpage, will the page visually freeze (no scrolling, no repainting) while it runs?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-pre-4" value="0"> Yes — rendering shares the same single thread and has to wait its turn too</label>
+            <label><input type="radio" name="lab10-pre-4" value="1"> No, rendering always happens on its own separate thread</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Rendering, like everything else in this lab, competes for the same single thread -- a long synchronous block genuinely freezes the visible page, not just background logic." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== CONCEPT ===================== -->
+    <h2>The Concept</h2>
+
+    <article class="concept-part">
+      <h3>Two related but distinct words: single-threaded and synchronous</h3>
+      <p>
+        <strong>Single-threaded</strong> means there is exactly one thread — one literal sequence
+        of instructions the CPU is following for your program — with no second thread running
+        alongside it to pick up other work. <strong>Synchronous</strong> means each instruction
+        fully completes before the next one begins; there's no partial overlap between one line and
+        the next. JavaScript is both: because it's single-threaded, its normal execution has to be
+        synchronous — with only one thread available, there's nothing else that <em>could</em> run
+        concurrently with the current line anyway.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Every lab so far has already been describing this constraint</h3>
+      <p>
+        Lab 05's call stack only ever has one active context because there's only one thread to run
+        it on. Lab 09's scope chain search happens as one uninterrupted operation, with no other
+        code able to run partway through it. None of this was ever stated as a separate rule before
+        now — it was the unspoken assumption underneath everything already covered.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>What actually happens with something scheduled for "later"</h3>
+      <p>
+        If JavaScript can only run one thing at a time, what happens to something like a timer
+        callback? It doesn't run early, and it doesn't interrupt whatever's currently executing —
+        it waits until the single thread is completely free, meaning every currently-running
+        synchronous line of code has fully finished, all the way back down to an empty call stack.
+        Only then does the engine even consider starting something new. (The full mechanism behind
+        exactly <em>how</em> that "something new" gets picked is the event loop, covered starting
+        at Lab 41 — this lab is only about the constraint that makes an event loop necessary in the
+        first place.)
+      </p>
+    </article>
+
+    <hr class="section-divider">
+
+    <!-- ===================== LAB ===================== -->
+    <h2>Lab</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> confirm directly that a scheduled callback can never interrupt currently-running synchronous code, no matter how short its delay.</p>
+      <p style="margin-bottom: 0;"><strong>You'll need:</strong> a browser console or <code>node</code> — no project, no files.</p>
+    </div>
+
+    <div data-step-checkboxes>
+      <article class="card lab-unit">
+        <h3>Lab 1 of 1 — Try to interrupt the single thread</h3>
+
+        <h4>Task</h4>
+        <p>Schedule a timer with a 0ms delay, then keep the thread busy, and see whether the timer can cut in line.</p>
+
+        <h4>Instructions</h4>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 1 complete">
+            <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 1 of 4</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>console.log("start");
+
+setTimeout(function () {
+  console.log("timer fired");
+}, 0);
+
+console.log("end");</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've predicted the order of all three logs without running it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 2 complete">
+            <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 2 of 4</div>
+          <div class="step-body">
+            <p>Predict the exact order the three lines print in, then reveal.</p>
+            <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+start
+end
+timer fired
+
+What you wrote: a 0ms timer sitting between two synchronous logs.
+
+What the engine effectively does: "0ms" only ever means "as soon
+as the thread is free," not "immediately." The synchronous code --
+both console.log calls -- fully finishes first, emptying the call
+stack. Only then does the timer callback get a turn, regardless of
+how short its requested delay was.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've run the snippet yourself and it matches the revealed order.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 3 complete">
+            <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 3 of 4</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Between the setTimeout call and the final console.log("end"),
+// add a synchronous loop that takes a noticeable moment to finish:
+// declare "var total = 0;", then a for loop from i = 0 to
+// less than 500000000, adding i to total each time.
+
+// Change the final console.log to also print total, e.g.
+// console.log("end", total);</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the busy loop is added between the timer and the final log, and the final log includes <code>total</code>.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 4 complete">
+            <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 4 of 4</div>
+          <div class="step-body">
+            <p>Predict: does the timer callback manage to sneak in and run partway through the loop, since the loop now takes a noticeable amount of time? Run it and compare, then answer this comprehension check: if this loop ran inside an actual webpage instead of a console, what would the user visually experience while it's running, and why?</p>
+            <textarea class="predict-box" rows="3" placeholder="Your answer..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px;"></textarea>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== COMPREHENSION CHECKLIST ===================== -->
+    <h2>Comprehension Checklist</h2>
+    <div class="card">
+      <ul class="check-list">
+        <li>I can explain, without hand-waving, why "0ms" doesn't mean "immediately" for a timer.</li>
+        <li>I can predict that a long synchronous loop delays timers, clicks, and page rendering equally, since all three share the same thread.</li>
+        <li>I know the word <code>async</code> does not, by itself, create a second thread.</li>
+        <li>I can connect this lab's constraint to why every previous lab's call-stack model only ever has one active context.</li>
+      </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== POST-LAB QUIZ ===================== -->
+    <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">In the busy-loop version of the experiment, did the timer callback manage to run at any point during the loop?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-post-0" value="0"> No — it still had to wait until the entire loop finished and the thread was free</label>
+            <label><input type="radio" name="lab10-post-0" value="1"> Yes, it ran once partway through, then the loop resumed</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="No amount of elapsed real time changes the rule — the timer callback can only run once the currently-running synchronous code fully completes." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">If this loop ran inside a real webpage, what would the user experience while it's running?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-post-1" value="0"> The page would appear completely frozen — no scrolling, no clicks registering, no visual updates</label>
+            <label><input type="radio" name="lab10-post-1" value="1"> The page would keep responding normally, since the loop runs in the background</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Rendering and input handling share the exact same single thread as this loop — the page genuinely can't do anything else until the loop finishes." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Suppose two setTimeout(fn, 0) calls are scheduled back to back, both before any other synchronous code runs. Can their callbacks execute at the same time as each other?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-post-2" value="0"> No — even two scheduled callbacks still run one at a time, never simultaneously</label>
+            <label><input type="radio" name="lab10-post-2" value="1"> Yes, since they were scheduled independently of each other</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="There is still only one thread available — every callback, however it was scheduled, has to take its own separate turn." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Does increasing a setTimeout's delay from 0ms to, say, 5000ms change whether it can interrupt currently-running synchronous code?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-post-3" value="0"> No — no delay value, however large or small, lets a callback interrupt code that's already running</label>
+            <label><input type="radio" name="lab10-post-3" value="1"> Yes, a longer delay gives it a higher-priority interrupt</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The delay only ever controls the minimum wait before a callback becomes eligible to run — it never grants permission to interrupt code already in progress." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">Given everything in this lab, what's actually wrong with the sentence "JavaScript runs the setTimeout callback in the background while the loop runs"?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab10-post-4" value="0"> There is no "background" — there's only the one thread, and the callback waits its turn on that same thread, it doesn't run alongside the loop</label>
+            <label><input type="radio" name="lab10-post-4" value="1"> Nothing is wrong with that sentence — it's an accurate description</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="This exact phrasing is the most common wrong mental model this lab exists to correct — there's no second lane for anything to run in." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== REFLECTION ===================== -->
+    <h2>Reflection Questions</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Write your own answer first — the blurred text is one possible answer, not the only correct one.
+    </p>
+
+    <div class="card">
+      <p><strong>Reflection 1 of 3.</strong> Before this lab, if someone had asked you "does JavaScript run things in parallel," what would you have said, and why?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          Words like "async," "background," and "concurrently" are common enough in everyday
+          descriptions of JavaScript that it's easy to assume some form of real parallelism is
+          happening. This lab's point is that none of that vocabulary changes the underlying fact:
+          exactly one thread, exactly one thing running at any instant.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>Reflection 2 of 3.</strong> Have you ever seen a webpage freeze up completely during some heavy operation? Reframe that experience using this lab's model — what was actually happening on the single thread at that moment?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          A frozen page during heavy JavaScript work is this lab's busy-loop experiment happening
+          for real — some synchronous block of code occupied the single thread long enough that
+          rendering, scrolling, and click handling all had to wait in line behind it, with no way
+          to cut in.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> This lab said the full mechanism for "how something scheduled for later actually gets picked to run" is covered starting at Lab 41. Based only on what you know now, what's one specific question you'd want that later lab to answer?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          A natural question: if two different callbacks both become eligible to run at the same
+          moment — say, a timer and a network response arriving at the same time — which one
+          actually gets to go first, and is that decision predictable or arbitrary? (It's
+          predictable, and Lab 41 onward covers exactly how.)
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT BREAKS ===================== -->
+    <h2>What Breaks If This Understanding Is Wrong?</h2>
+    <div class="alert alert-warning">
+      If you believe JavaScript can genuinely run two pieces of your own code at the same instant,
+      the entire event-loop model later in this curriculum will look contradictory instead of
+      logical — every explanation of task queues and microtasks assumes, as a starting fact, that
+      only one thing can ever be actively running.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT WAS LEARNED ===================== -->
+    <h2>What JavaScript Concept Was Learned Today?</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        JavaScript is single-threaded and synchronous by default — exactly one thing runs at a
+        time, and a scheduled callback can never interrupt code that's already running, no matter
+        how short its requested delay.
+      </p>
+      <p class="concern-relate" style="margin-bottom: 0;">
+        <strong>Relates to:</strong> ▶ Execution (10 of 10) + ⏱ Asynchrony &amp; Concurrency
+        (9 of 10) — the execution constraint that makes an entire async/event-loop model necessary
+        in the first place.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        That completes the Foundation section — execution contexts, the call stack, hoisting,
+        variable declarations, the global object, the scope chain, and now the single-threaded
+        constraint tying them all together. Lab 11 moves into Functions as a First-Class Concept,
+        starting from an idea this section has already leaned on quietly: that a function is
+        itself a value.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>
