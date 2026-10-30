@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 11 — Functions Are Objects — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-10-single-threaded-synchronous/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; next lab &rarr; <em>(Lab 12 — not written yet)</em>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Functions</span>
+      <span class="badge badge-current">Lab 11</span>
+    </div>
+    <h1>Functions Are Objects</h1>
+    <p class="subtitle">
+      A function isn't a special kind of thing that lives outside the value system. It's a value —
+      an object you can name, store, pass around, return, and even attach properties to — that
+      happens to be callable.
+    </p>
+
+    <div class="build-state">
+      <strong>What this lab produces:</strong> no files, no commit — a pure concept lab. You'll run
+      short snippets in a console or with <code>node</code>.
+    </div>
+
+    <div class="concept-type">Concept type: <strong>Common Concept, JavaScript-Specific Rules</strong></div>
+
+    <div class="concern-badge">
+      <div class="concern-glyph">ƒ</div>
+      <div class="concern-text">
+        <span class="concern-name">FUNCTIONS &amp; ABSTRACTION</span>
+        <span class="concern-index">4 of 10</span>
+      </div>
+    </div>
+    <p class="subtitle" style="margin-top: 10px;">
+      Every language needs a way to package computation so it can be reused. Languages differ on
+      whether that package is a second-class construct or an ordinary value. JavaScript's answer:
+      a function is just another object.
+    </p>
+
+    <!-- ===================== MENTAL MODELS (SVG) ===================== -->
+    <h2>Mental Models</h2>
+    <div class="visual-grid">
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v1t v1d">
+            <title id="v1t">A function is an object with a callable slot</title>
+            <desc id="v1d">A box labelled object containing a few property rows, with one highlighted extra slot labelled callable body.</desc>
+            <rect x="30" y="15" width="120" height="90" rx="4"/>
+            <text x="90" y="30" style="font-size:8px;">function object</text>
+            <text x="90" y="50" style="font-size:8px;">name: "greet"</text>
+            <text x="90" y="64" style="font-size:8px;">length: 2</text>
+            <rect x="42" y="74" width="96" height="22" rx="3" class="active"/>
+            <text x="90" y="88" class="active" style="font-size:8px;">callable body</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>An Object With One Extra Ability</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A function value has properties like any other object — plus a hidden internal slot holding the code to run when you put <code>()</code> after it. Take away the callable part and what's left behaves like an ordinary object.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v2t v2d">
+            <title id="v2t">A name is a label pointing at the function</title>
+            <desc id="v2d">Two label tags, greet and hello, with arrows pointing at the same single function box.</desc>
+            <rect x="100" y="38" width="60" height="44" rx="4" class="active"/>
+            <text x="130" y="64" class="active" style="font-size:8px;">function</text>
+            <rect x="15" y="25" width="50" height="20" rx="3"/>
+            <text x="40" y="38" style="font-size:8px;">greet</text>
+            <rect x="15" y="75" width="50" height="20" rx="3"/>
+            <text x="40" y="88" style="font-size:8px;">hello</text>
+            <path d="M65 35 L100 52 M65 85 L100 68"/>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>Names Point at Functions; They Aren't the Function</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Writing <code>function greet() {}</code> creates a function object <em>and</em> binds the name <code>greet</code> to it (the binding idea from Labs 07 and 09). A second variable can point at the very same function — one object, two names.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v3t v3d">
+            <title id="v3t">Passing, storing and returning a function</title>
+            <desc id="v3d">A function box with three arrows leaving it: into an array slot, into a call as an argument, and out of a return.</desc>
+            <rect x="60" y="45" width="60" height="30" rx="4" class="active"/>
+            <text x="90" y="64" class="active" style="font-size:8px;">fn</text>
+            <path d="M90 45 L90 20"/><text x="90" y="14" style="font-size:7px;">stored in array</text>
+            <path d="M60 60 L15 60"/><text x="30" y="52" style="font-size:7px;">argument</text>
+            <path d="M120 60 L165 60"/><text x="148" y="52" style="font-size:7px;">returned</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>Anything You Can Do With a Value, You Can Do With a Function</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Store it in a variable, put it in an array, hand it to another function, return it from one. Languages that allow all of that are said to have <strong>first-class functions</strong>. JavaScript does — which is why callbacks (Lab 16) and closures (Lab 14) are even possible.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: a recipe card versus cooking from it</title>
+            <desc id="v4d">A recipe card on the left that can be filed and handed around, and a pan on the right that only appears when the recipe is followed.</desc>
+            <rect x="15" y="30" width="70" height="60" rx="4" class="active"/>
+            <text x="50" y="64" class="active" style="font-size:8px;">recipe card</text>
+            <circle cx="140" cy="60" r="22"/>
+            <text x="140" y="64" style="font-size:8px;">cooking</text>
+            <path d="M85 60 L118 60"/>
+            <text x="102" y="52" style="font-size:7px;">( )</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: The Recipe Card vs. Cooking</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A recipe card is a thing: you can file it, copy it, hand it to a friend, write notes on its back. Nothing is cooked until someone follows it. <code>greet</code> is the card; <code>greet()</code> is following it. Mixing those two up is the most common mistake in this lab.</p></div>
+      </div>
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">Misconception: greet and greet() are not the same thing</title>
+            <desc id="v5d">Two boxes side by side: greet, labelled the function itself, and greet(), labelled the value it returns.</desc>
+            <rect x="12" y="35" width="70" height="40" rx="4" class="active"/>
+            <text x="47" y="52" class="active" style="font-size:9px;">greet</text>
+            <text x="47" y="66" class="active" style="font-size:7px;">the function</text>
+            <rect x="98" y="35" width="70" height="40" rx="4"/>
+            <text x="133" y="52" style="font-size:9px;">greet()</text>
+            <text x="133" y="66" style="font-size:7px;">its return value</text>
+            <text x="90" y="100" style="font-size:12px;">≠</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: "greet" and "greet()" Mean the Same Thing</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Without parentheses you're holding the function itself. With them you've <em>run</em> it and are holding whatever it returned. Pass the wrong one to something expecting a function and the program fails — or worse, runs code at the wrong time.</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 4</strong> — I can show, with code, that a function is an object: it has properties, can be given new ones, and passes <code>instanceof Object</code>.</li>
+        <li><strong>Objective 2 of 4</strong> — I can predict what a function's built-in <code>name</code> and <code>length</code> properties report for a given definition.</li>
+        <li><strong>Objective 3 of 4</strong> — I can store a function in a variable, an array, and an object, pass it as an argument, and return it from another function.</li>
+        <li><strong>Objective 4 of 4</strong> — I can explain the difference between <code>fn</code> and <code>fn()</code>, and predict what breaks when the wrong one is used.</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PRE-LAB QUIZ ===================== -->
+    <h2>Pre-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Answer from intuition first. Getting these wrong is fine — the point is to commit to a guess.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">Lab 03 said a function is an object underneath, even though <code>typeof</code> labels it "function". If that's true, can you attach your own property to a function, like <code>myFunc.note = "hi"</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-pre-0" value="0"> Yes — objects can hold properties, and a function is an object</label>
+            <label><input type="radio" name="lab11-pre-0" value="1"> No — functions are a separate kind of thing that can't hold properties</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Functions are ordinary objects with an extra callable ability, so adding properties works exactly as it does on any other object." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">Given <code>function add(a, b) { return a + b; }</code>, what do you expect <code>add.length</code> to be?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-pre-1" value="0"> 2 — the number of parameters the function declares</label>
+            <label><input type="radio" name="lab11-pre-1" value="1"> 1 — the number of statements in the body</label>
+            <label><input type="radio" name="lab11-pre-1" value="2"> undefined — functions have no length</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A function's length property reports how many parameters it declares, which is not the same as how many arguments any particular call passes." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Can a function be passed to another function as an argument, the same way a number or string can?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-pre-2" value="0"> Yes — it's a value like any other</label>
+            <label><input type="radio" name="lab11-pre-2" value="1"> No — only numbers, strings and objects can be arguments</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Functions are values, so they can be passed, stored and returned just like any other value." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Does <code>console.log(greet)</code> (no parentheses) run the function <code>greet</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-pre-3" value="0"> No — it just refers to the function; running requires the call parentheses</label>
+            <label><input type="radio" name="lab11-pre-3" value="1"> Yes — naming a function always runs it</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The name alone evaluates to the function object itself. Only the () call operator runs it." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">If you write <code>var other = greet;</code>, how many function objects exist afterward?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-pre-4" value="0"> One — both names point at the same function object</label>
+            <label><input type="radio" name="lab11-pre-4" value="1"> Two — assignment makes a copy of the function</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Assigning a function to another variable copies the reference, not the function. Lab 21 covers this by-reference behavior for all objects." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== CONCEPT ===================== -->
+    <h2>The Concept</h2>
+
+    <article class="concept-part">
+      <h3>What "a function is an object" actually means</h3>
+      <p>
+        An <strong>object</strong> (Lab 03) is a collection of named slots — properties — each
+        holding a value. A function is exactly that, with one addition: the engine gives it an
+        internal, hidden ability to be <strong>called</strong>, meaning to have its body run when
+        you write <code>()</code> after it. You can't see that ability as a property; it's part of
+        how the engine represents the value. Everything else about functions-as-objects follows
+        from this one fact.
+      </p>
+      <pre><code>function greet(name, punctuation) {
+  return "Hello, " + name + punctuation;
+}
+
+console.log(typeof greet);           // "function"
+console.log(greet instanceof Object); // true</code></pre>
+      <p style="margin-bottom: 0;">
+        <code>instanceof Object</code> asks "is this value an object, in the prototype sense?"
+        (the full story is Lab 25 onward). For now: <code>true</code> means a function is not a
+        separate species — it's an object that happens to be callable. <code>typeof</code>
+        reports <code>"function"</code> purely as a convenience label, as Lab 03 noted.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Built-in properties: name and length</h3>
+      <p>
+        Every function arrives with a couple of properties already attached.
+        <code>name</code> is the function's name as a string — <code>"greet"</code> for the
+        function above. <code>length</code> is the number of parameters it <em>declares</em> —
+        <code>2</code> for <code>greet(name, punctuation)</code>. Note what <code>length</code> is
+        not: it isn't how many arguments a given call passes (you can call
+        <code>greet("Ada")</code> with one), and it isn't the size of the body.
+      </p>
+      <p style="margin-bottom: 0;">
+        Two precision notes. A parameter with a default value, and every parameter after it,
+        isn't counted in <code>length</code>, and neither is a rest parameter — Lab 17 covers
+        those forms. And <code>name</code> and <code>length</code> are real own properties but
+        <em>non-enumerable</em> (they won't show up in <code>Object.keys</code>), which is why you'll
+        see in the lab that only properties you add yourself get listed.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>You can add your own properties</h3>
+      <p>
+        Because it's an object, a function accepts new properties with ordinary assignment:
+        <code>greet.timesCalled = 0;</code>. Code inside the function can read and change it by
+        referring to the function by name: <code>greet.timesCalled++</code>. This gives a function
+        a small piece of memory that outlives any single call — a function's local variables
+        vanish when each call finishes (Lab 05), but a property on the function object itself
+        stays.
+      </p>
+      <p style="margin-bottom: 0;">
+        This is occasionally useful (counters, caches, flags), but it's also easy to overuse.
+        Lab 14 introduces a cleaner, more private way to keep state with a function. The point
+        here is to prove the claim, not to recommend the habit.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>First-class functions: a function is just a value</h3>
+      <p>
+        Since a function is an object, and objects are values, a function can go anywhere a value
+        can. Four things, concretely:
+      </p>
+      <ol>
+        <li><strong>Assign it to another variable:</strong> <code>var other = greet;</code> — now two names point at one function.</li>
+        <li><strong>Store it in a data structure:</strong> <code>var tools = [greet, shout];</code> or <code>{ hello: greet }</code>, then call <code>tools[0]("Ada", "!")</code>.</li>
+        <li><strong>Pass it as an argument:</strong> <code>callTwice(greet)</code> — the receiving function gets the function itself and can call it.</li>
+        <li><strong>Return it from a function:</strong> a function can build and hand back another function.</li>
+      </ol>
+      <p>
+        Languages that allow all four are said to have <strong>first-class functions</strong>
+        ("first-class" meaning: not treated as a lesser kind of thing than numbers or strings).
+        Almost everything in the next several labs — callbacks, closures, currying — depends on
+        this single property.
+      </p>
+      <div class="xlang">
+        <div class="xlang-label">Cross-language note</div>
+        <p><strong>Common concept:</strong> first-class functions — treating behavior as a value.</p>
+        <p><strong>Python:</strong> also has first-class functions; a function is an object with attributes like <code>__name__</code>, and you can attach your own, much as here.</p>
+        <p><strong>C#:</strong> methods aren't values by themselves; you wrap one in a delegate (or use <code>Func&lt;&gt;</code>/<code>Action&lt;&gt;</code>) to pass it around. JavaScript needs no wrapper.</p>
+        <p><strong>JavaScript:</strong> the function <em>is</em> the value, with no wrapper step.</p>
+      </div>
+    </article>
+
+    <article class="concept-part">
+      <h3>The two-character difference: greet vs greet()</h3>
+      <p>
+        A name on its own, like <code>greet</code>, evaluates to the function object — the recipe
+        card from the fourth mental model. Adding <code>()</code> is the <strong>call
+        operator</strong>: it runs the function and the whole expression evaluates to the return
+        value. So <code>callTwice(greet)</code> hands over the function, whereas
+        <code>callTwice(greet("Ada", "!"))</code> runs <code>greet</code> immediately and hands over
+        its <em>result</em> — a string, not something callable. If the receiver then tries to call
+        it, you get a <code>TypeError</code> ("... is not a function") — the error Lab 04
+        previewed as the cousin of <code>ReferenceError</code>.
+      </p>
+      <p style="margin-bottom: 0;">
+        Where the engine puts all this: the function object lives in memory like any object, and
+        the name <code>greet</code> is a binding in the surrounding scope that points to it (Labs
+        07 and 09). Calling it pushes a fresh execution context on the call stack (Lab 05). The
+        object and its call are separate things — one persists, the other lasts only as long as
+        the call.
+      </p>
+    </article>
+
+    <hr class="section-divider">
+
+    <!-- ===================== LAB ===================== -->
+    <h2>Lab</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> prove directly that a function is an object with properties, and that it can be stored, passed and returned like any value.</p>
+      <p style="margin-bottom: 0;"><strong>You'll need:</strong> a browser console or <code>node</code> — no project, no files.</p>
+    </div>
+
+    <div data-step-checkboxes>
+      <article class="card lab-unit">
+        <h3>Lab 1 of 1 — Treat a function like any other object</h3>
+
+        <h4>Task</h4>
+        <p>Inspect a function's properties, give it one of your own, then move it around as a value.</p>
+
+        <h4>Instructions</h4>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 1 complete">
+            <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 1 of 6</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Paste this into a scratch file or console. Read it — do not run it yet.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>function greet(name, punctuation) {
+  return "Hello, " + name + punctuation;
+}
+
+console.log(typeof greet);
+console.log(greet.name);
+console.log(greet.length);
+console.log(greet instanceof Object);</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've predicted all four printed lines without running it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 2 complete">
+            <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 2 of 6</div>
+          <div class="step-body">
+            <p>Predict the four lines of output, then reveal.</p>
+            <textarea class="predict-box" rows="4" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+function
+greet
+2
+true
+
+What you wrote: a plain function declaration, inspected four ways.
+
+What the engine effectively does: typeof gives functions their own
+"function" label (Lab 03), name is the string "greet", length counts the
+two declared parameters, and instanceof Object is true because a
+function is an object underneath -- just a callable one.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've run the snippet and it matches the revealed output.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 3 complete">
+            <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 3 of 6</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Right after the greet function declaration, add a line that
+// sets a new property on it: greet.timesCalled = 0;
+
+// Inside greet, on the line before the return, add a line that
+// increments that property: greet.timesCalled++;
+
+// At the bottom of the file, call greet("Ada", "!") and greet("Grace", "?")
+// and log what each returns.
+// Then log greet.timesCalled.
+// Then log Object.keys(greet).</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the property is declared, incremented inside the function, both calls are made, and the last two logs are in place.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 4 complete">
+            <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 4 of 6</div>
+          <div class="step-body">
+            <p>Predict what <code>greet.timesCalled</code> and <code>Object.keys(greet)</code> print. In particular: will <code>name</code> and <code>length</code> appear in the keys list? Then reveal.</p>
+            <textarea class="predict-box" rows="3" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output (last two lines):
+2
+[ 'timesCalled' ]
+
+What you wrote: an ordinary property added to a function object, and
+changed from inside the function.
+
+What the engine effectively does: the property lives on the function
+object itself, so it survives between calls (unlike local variables,
+which vanish when each call ends -- Lab 05). Object.keys lists only
+enumerable own properties; name and length exist but are
+non-enumerable, so only your own property appears.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> your run matches the revealed output.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 5 complete">
+            <input type="checkbox" data-step-checkbox="4" aria-label="Mark step 5 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 5 of 6</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Declare var other = greet; then log other === greet.
+// Declare var tools = [greet]; then log tools[0]("Lin", ".").
+// Declare var kit = { hello: greet }; then log kit.hello("Sam", "!").
+
+// Declare a function named callTwice with one parameter, fn.
+// Inside it, log fn("Ada", "?") and then log fn("Ada", "?") again.
+// Call callTwice(greet) -- note: no parentheses after greet.
+
+// Declare a function named makeShouter with no parameters.
+// Inside it, declare an inner function named shout with no parameters
+// that logs "HEY", and return shout (no parentheses).
+// Declare var s = makeShouter(); then call s().</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the file runs without errors and you can say, for each block, which of the four first-class moves it demonstrates (assign, store, pass, return).</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 6 complete">
+            <input type="checkbox" data-step-checkbox="5" aria-label="Mark step 6 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 6 of 6</div>
+          <div class="step-body">
+            <p>Now change one thing: replace <code>callTwice(greet)</code> with <code>callTwice(greet("Ada", "!"))</code>. Predict what happens — does it run? Does it throw? If so, what kind of error and why? Then reveal.</p>
+            <textarea class="predict-box" rows="3" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Result:
+TypeError: fn is not a function
+
+What you wrote: greet("Ada", "!") WITH parentheses, as the argument.
+
+What the engine effectively does: it evaluates the argument first. So
+greet runs right there, and the string "Hello, Ada!" is what gets
+passed in as fn. Inside callTwice, fn("Ada", "?") tries to call a
+string, and strings aren't callable -- hence the TypeError. Note also
+that greet.timesCalled went up by one at that moment, because greet
+really ran, at the wrong time.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you can explain in your own words why the parentheses changed what <code>callTwice</code> received.</p>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== COMPREHENSION CHECKLIST ===================== -->
+    <h2>Comprehension Checklist</h2>
+    <div class="card">
+      <ul class="check-list">
+        <li>I can show, with a line of code, that a function is an object that accepts new properties.</li>
+        <li>I can say what <code>name</code> and <code>length</code> report, and that <code>length</code> counts declared parameters, not arguments passed.</li>
+        <li>I can explain why a property on a function persists between calls while its local variables don't.</li>
+        <li>I can demonstrate all four first-class moves: assign, store, pass, return.</li>
+        <li>I can explain the difference between <code>fn</code> and <code>fn()</code> and recognize the "not a function" <code>TypeError</code> it causes.</li>
+      </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== POST-LAB QUIZ ===================== -->
+    <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">Given <code>function f(a, b, c) {}</code>, you call <code>f(1)</code>. What is <code>f.length</code> afterward?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-post-0" value="0"> 3 — it's fixed by the declaration, not by any call</label>
+            <label><input type="radio" name="lab11-post-0" value="1"> 1 — the number of arguments in the most recent call</label>
+            <label><input type="radio" name="lab11-post-0" value="2"> 0 — the call didn't supply all the parameters</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="length is a property of the function object set from its declared parameters; individual calls don't change it." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">A function <code>counter()</code> keeps a tally in a property, <code>counter.n</code>, and a second variable declared with <code>var n = 0</code> inside its body. After three calls, which one reflects three calls?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-post-1" value="0"> Only <code>counter.n</code> — the local <code>var</code> is recreated fresh on every call</label>
+            <label><input type="radio" name="lab11-post-1" value="1"> Both of them</label>
+            <label><input type="radio" name="lab11-post-1" value="2"> Only the local <code>var n</code>, since it's declared inside</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Each call gets a new execution context with a fresh local variable; the property lives on the long-lived function object." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">After <code>var other = greet;</code>, you run <code>other.note = "hi"</code>. What does <code>greet.note</code> give?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-post-2" value="0"> <code>"hi"</code> — both names refer to the very same function object</label>
+            <label><input type="radio" name="lab11-post-2" value="1"> <code>undefined</code> — <code>other</code> is a separate copy</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Assignment copies the reference, not the function, so a property added through one name is visible through the other." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">What does <code>typeof greet()</code> report when <code>greet</code> returns a string?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-post-3" value="0"> <code>"string"</code> — <code>typeof</code> is applied to the returned value, not the function</label>
+            <label><input type="radio" name="lab11-post-3" value="1"> <code>"function"</code> — it's still looking at greet</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="greet() runs the function first, so what typeof sees is the return value. Compare typeof greet, which would be 'function'." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">Which line hands <code>greet</code> itself to <code>setupButton</code>, so it can be called later?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab11-post-4" value="0"> <code>setupButton(greet);</code></label>
+            <label><input type="radio" name="lab11-post-4" value="1"> <code>setupButton(greet());</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Without parentheses the function object is passed along; with them, greet runs immediately and only its result is passed." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== REFLECTION ===================== -->
+    <h2>Reflection Questions</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Write your own answer first — the blurred text is one possible answer, not the only correct one.
+    </p>
+
+    <div class="card">
+      <p><strong>Reflection 1 of 3.</strong> In your own words, what is the difference between <em>a function</em> and <em>calling a function</em>? Try an analogy of your own rather than the recipe card.</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          The function is a stored, reusable piece of behavior you can hold, hand over or label —
+          like a light switch installed on a wall. Calling it is flipping the switch, which makes
+          something actually happen once. You can talk about, move, or replace the switch without
+          ever flipping it.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>Reflection 2 of 3.</strong> If you've used Python or C#, how does treating a function as a plain value compare with how that language handles it? What does JavaScript save you from writing?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          Python is similar — functions are objects there too. In C#, you typically wrap a method in
+          a delegate or <code>Func&lt;&gt;</code> before you can pass it around; JavaScript skips
+          that step because the function already is a value. The trade-off is that mistakes like
+          passing <code>greet()</code> instead of <code>greet</code> are easy to make and only
+          show up when the program runs.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> You can keep a counter in a function's own property. Based on Lab 05's model of execution contexts, why is that different from keeping the counter in a <code>var</code> inside the function? And what might be unappealing about putting state on the function object?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          A local <code>var</code> belongs to one call's execution context and is discarded when
+          that call finishes, so it restarts at its initial value every time. A property belongs to
+          the function object, which persists, so it accumulates. The downside is that the property
+          is public: any code that can see <code>greet</code> can read or overwrite
+          <code>greet.timesCalled</code>. Lab 14 (closures) shows how to keep persistent state
+          private.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT BREAKS ===================== -->
+    <h2>What Breaks If This Understanding Is Wrong?</h2>
+    <div class="alert alert-warning">
+      If functions feel like a separate category from values, callbacks (Lab 16) will look like
+      magic — "why can I hand over code?" — and closures (Lab 14) will be unexplainable, since a
+      closure is a function value carried out of the scope where it was made. Method calls and
+      <code>this</code> (Lab 18) also rest on this: a method is just a function stored in an
+      object's property.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT WAS LEARNED ===================== -->
+    <h2>What JavaScript Concept Was Learned Today?</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        A function in JavaScript is an object that can also be called: it has properties (including
+        built-in <code>name</code> and <code>length</code>, and any you add), and it's a plain value
+        that can be assigned, stored, passed and returned. The name <code>greet</code> refers to
+        the function; <code>greet()</code> runs it.
+      </p>
+      <p class="concern-relate" style="margin-bottom: 0;">
+        <strong>Relates to:</strong> ƒ Functions &amp; Abstraction (4 of 10) — how do we package,
+        pass around, and reuse computation? JavaScript's answer: make the package an ordinary
+        value, with no special wrapper.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Now that a function is clearly a value, a natural question appears: there is more than one
+        way to <em>write</em> a function value. Lab 12 compares function declarations with function
+        expressions — and ties back to Lab 06's hoisting, since the two behave differently before
+        their line runs.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a> &nbsp;&middot;&nbsp;
+      <a href="../lab-10-single-threaded-synchronous/index.html">&larr; Lab 10 — Single-Threaded, Synchronous Execution</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>
