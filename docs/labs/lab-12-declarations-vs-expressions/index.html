@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 12 — Function Declarations vs Function Expressions — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-11-functions-are-objects/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; next lab &rarr; <em>(Lab 13 — not written yet)</em>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Functions</span>
+      <span class="badge badge-current">Lab 12</span>
+    </div>
+    <h1>Function Declarations vs Function Expressions</h1>
+    <p class="subtitle">
+      Two ways of writing a function look almost identical on the page, but the engine sets them up at completely different moments. This lab is where Lab 06's creation phase meets Lab 11's idea that a function is a value.
+    </p>
+
+    <div class="build-state">
+      <strong>What this lab produces:</strong> no files, no commit — a pure concept lab. You'll run short snippets in a console or with <code>node</code>.
+    </div>
+
+    <div class="concept-type">Concept type: <strong>Common Concept, JavaScript-Specific Rules</strong></div>
+
+    <div class="concern-badge">
+        <div class="concern-glyph">ƒ</div>
+        <div class="concern-text">
+          <span class="concern-name">FUNCTIONS &amp; ABSTRACTION</span>
+          <span class="concern-index">4 of 10</span>
+        </div>
+      </div>
+    <p class="subtitle" style="margin-top: 10px;">
+      Every language needs a way to define reusable computation. JavaScript gives you two syntaxes for it — one the engine sets up before any code runs, one it treats as an ordinary value to be assigned.
+    </p>
+
+    <!-- ===================== MENTAL MODELS (SVG) ===================== -->
+    <h2>Mental Models</h2>
+    <div class="visual-grid">
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v1t v1d">
+            <title id="v1t">A declaration is set up before any line runs</title>
+            <desc id="v1d">A function box labelled declared sitting inside the creation phase band at the top, with an arrow showing it exists before execution starts.</desc>
+            <rect x="15" y="12" width="150" height="30" rx="4"/><text x="90" y="24" style="font-size:7px;">creation phase</text><rect x="45" y="27" width="90" height="12" rx="3" class="active"/><text x="90" y="36" class="active" style="font-size:7px;">declared() ready</text><rect x="15" y="60" width="150" height="45" rx="4"/><text x="90" y="76" style="font-size:7px;">execution phase</text><text x="90" y="92" style="font-size:7px;">line 1, line 2 ...</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>Declaration: Set Up Early</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A function declaration (a statement that starts with the word <code>function</code> and a name) is processed during the creation phase from Lab 06. By the time the first line runs, the name already points at a complete, callable function.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v2t v2d">
+            <title id="v2t">An expression is a value that appears where a value is expected</title>
+            <desc id="v2d">A function box on the right of an equals sign, with an arrow carrying it into a variable label on the left.</desc>
+            <rect x="10" y="42" width="55" height="26" rx="4"/><text x="37" y="58" style="font-size:8px;">expressed</text><text x="80" y="58" style="font-size:12px;">=</text><rect x="100" y="38" width="65" height="34" rx="4" class="active"/><text x="132" y="58" class="active" style="font-size:8px;">function () {}</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>Expression: A Value You Assign</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>When <code>function</code> shows up somewhere a value could go — right of an <code>=</code>, as an argument, inside parentheses — it's an expression. It creates a function object at the moment that line runs, and something else (like a variable) has to hold on to it.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v3t v3d">
+            <title id="v3t">The variable is hoisted but starts out undefined</title>
+            <desc id="v3d">Two stacked states of a variable box: first containing undefined, then after the assignment line containing a function.</desc>
+            <rect x="55" y="12" width="70" height="26" rx="4"/><text x="90" y="28" style="font-size:8px;">expressed: undefined</text><path d="M90 40 L90 60"/><text x="130" y="54" style="font-size:7px;">assignment line runs</text><rect x="55" y="64" width="70" height="26" rx="4" class="active"/><text x="90" y="80" class="active" style="font-size:8px;">expressed: function</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>The Variable Exists Early; Its Value Doesn't</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>With <code>var</code>, the name <code>expressed</code> is created in the creation phase and set to <code>undefined</code>. The function only gets in once the assignment line actually executes — so calling it earlier means trying to call <code>undefined</code>.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: the printed directory versus a note handed over later</title>
+            <desc id="v4d">A printed directory page on the left already listing a name, and a hand passing a note on the right that only exists at a later moment.</desc>
+            <rect x="12" y="20" width="65" height="80" rx="4" class="active"/><text x="44" y="40" class="active" style="font-size:7px;">printed directory</text><text x="44" y="60" class="active" style="font-size:7px;">declared()</text><rect x="105" y="45" width="60" height="30" rx="4"/><text x="135" y="63" style="font-size:7px;">note, later</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: Directory vs. Note</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A declaration is like an entry already printed in the building directory before anyone arrives: from the first minute you can look it up. An expression is a note someone hands you partway through the day — before that moment, there's nothing to look up.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">The name in a named function expression is only visible inside the function</title>
+            <desc id="v5d">An outer large box labelled outside with nothing named g, and a small inner circle labelled g visible only inside.</desc>
+            <rect x="10" y="12" width="160" height="96" rx="4"/><text x="90" y="26" style="font-size:7px;">outside: g not visible</text><circle cx="90" cy="68" r="28" class="active"/><text x="90" y="72" class="active" style="font-size:8px;">g visible</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: "The Name After function Is a Normal Variable"</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>In <code>var f = function g() {}</code>, the name <code>g</code> is <strong>not</strong> added to the surrounding scope. It exists only inside the function's own body (handy for recursion and clearer stack traces). Outside, only <code>f</code> works.</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 4</strong> — I can look at a function definition and say whether it's a declaration or an expression, using the "does the statement start with <code>function</code>?" test.</li>
+        <li><strong>Objective 2 of 4</strong> — I can predict whether a call placed above a function's definition will work, fail with <code>TypeError</code>, or fail with <code>ReferenceError</code>.</li>
+        <li><strong>Objective 3 of 4</strong> — I can explain why calling a <code>var</code>-assigned function early gives <code>TypeError</code> while a <code>const</code>-assigned one gives <code>ReferenceError</code>.</li>
+        <li><strong>Objective 4 of 4</strong> — I can state where a named function expression's name is, and isn't, visible.</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PRE-LAB QUIZ ===================== -->
+    <h2>Pre-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Answer from intuition first. Getting these wrong is fine — the point is to commit to a guess.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">What does this print? <code>console.log(typeof a); function a() {}</code></span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-pre-0" value="0"> <code>"function"</code></label>
+            <label><input type="radio" name="lab12-pre-0" value="1"> <code>"undefined"</code></label>
+            <label><input type="radio" name="lab12-pre-0" value="2"> It throws a <code>ReferenceError</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A function declaration is set up during the creation phase (Lab 06), so by the time the log runs, a is already a complete function." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">What happens here? <code>b(); var b = function () {};</code></span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-pre-1" value="0"> It runs without any error</label>
+            <label><input type="radio" name="lab12-pre-1" value="1"> <code>TypeError</code>: b is not a function</label>
+            <label><input type="radio" name="lab12-pre-1" value="2"> <code>ReferenceError</code>: b is not defined</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The var b exists early but holds undefined until the assignment line runs, so the early call tries to call undefined." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Is a line containing only <code>function () {}</code> (no name, not inside anything else) valid JavaScript?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-pre-2" value="0"> Yes — it creates an anonymous function and discards it</label>
+            <label><input type="radio" name="lab12-pre-2" value="1"> Yes, but only inside another function</label>
+            <label><input type="radio" name="lab12-pre-2" value="2"> No — it's a <code>SyntaxError</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="At statement position the parser expects a declaration, and a declaration requires a name. Wrap it in parentheses and it becomes an expression." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Given <code>var f = function g() {};</code>, can code outside the function call <code>g()</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-pre-3" value="0"> No — <code>g</code> is not visible outside</label>
+            <label><input type="radio" name="lab12-pre-3" value="1"> Yes — <code>g</code> and <code>f</code> are both available</label>
+            <label><input type="radio" name="lab12-pre-3" value="2"> Only after <code>f</code> has been called once</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The name of a named function expression exists only inside that function&#x27;s own body. Only f is added to the surrounding scope." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">What happens here? <code>c(); let c = function () {};</code></span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-pre-4" value="0"> <code>TypeError</code>, exactly like with <code>var</code></label>
+            <label><input type="radio" name="lab12-pre-4" value="1"> <code>ReferenceError</code> from the temporal dead zone</label>
+            <label><input type="radio" name="lab12-pre-4" value="2"> It runs fine, since <code>let</code> is hoisted completely</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="let and const bindings exist but are locked until their declaration line runs (Lab 07), so touching them early is a ReferenceError, not a TypeError." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== CONCEPT ===================== -->
+    <h2>The Concept</h2>
+
+    <article class="concept-part">
+      <h3>Two ways to write what looks like the same function</h3>
+      <p>
+        Here are two definitions that behave the same once everything is running:
+      </p>
+      <pre><code>function greet() { return "hi"; }          // declaration
+
+var greet2 = function () { return "hi"; };  // expression</code></pre>
+      <p>
+        A <strong>function declaration</strong> is a <em>statement</em> — a complete instruction
+        in its own right — that begins with the word <code>function</code> followed by a name. A
+        <strong>function expression</strong> is the same <code>function ...</code> text used where
+        a <em>value</em> is expected: on the right of an <code>=</code>, as an argument to another
+        call, or wrapped in parentheses. (An <em>expression</em> is any piece of code that
+        produces a value; Lab 11 showed that a function is such a value.)
+      </p>
+      <p style="margin-bottom: 0;">
+        A reliable test: <strong>if the statement begins with the word <code>function</code>, it's
+        a declaration; if <code>function</code> shows up anywhere else, it's an expression.</strong>
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Declarations are processed in the creation phase</h3>
+      <p>
+        Lab 06 showed that before a scope's code runs line by line, the engine makes a
+        <strong>creation phase</strong> pass that registers its names. For a function declaration,
+        that pass does something special: it registers the name <em>and</em> builds the finished
+        function object right then. Nothing about the function is left to do later.
+      </p>
+      <pre><code>console.log(add(2, 3));   // 5 -- works, even though add is defined below
+
+function add(a, b) {
+  return a + b;
+}</code></pre>
+      <p style="margin-bottom: 0;">
+        This is called <strong>hoisting</strong> of the whole function: it behaves as if the
+        definition were moved to the top of its scope. It's why many people put the main logic
+        of a file first and the helper declarations below it.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Expressions follow the rules of whatever variable holds them</h3>
+      <p>
+        A function expression creates its function object only when execution reaches that line.
+        Until then, whether the name is usable depends entirely on how the variable was declared —
+        the rules from Lab 06 and Lab 07, unchanged:
+      </p>
+      <ul>
+        <li><strong><code>var</code>:</strong> the name exists from the start with the value <code>undefined</code>. Calling it early means calling <code>undefined</code>, which raises <code>TypeError: x is not a function</code>.</li>
+        <li><strong><code>let</code> / <code>const</code>:</strong> the name exists but is locked in the temporal dead zone until its declaration line runs. Touching it early raises <code>ReferenceError: Cannot access 'x' before initialization</code>.</li>
+      </ul>
+      <p style="margin-bottom: 0;">
+        Same situation — "I called a function before its line" — two different error types, and
+        the type tells you which kind of declaration you're dealing with. (Exact wording of the
+        messages varies slightly between engines; the error <em>types</em> don't.)
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Names: anonymous, named, and inferred</h3>
+      <p>
+        A function expression may leave out its name (an <strong>anonymous</strong> function
+        expression) or include one (a <strong>named function expression</strong>):
+      </p>
+      <pre><code>var a = function () {};              // anonymous expression
+var b = function inner() {};         // named expression
+
+console.log(a.name);   // "a"     -- inferred from the variable it was assigned to
+console.log(b.name);   // "inner"</code></pre>
+      <p>
+        Two details worth knowing. First, when an anonymous function expression is assigned
+        straight to a variable, modern engines <em>infer</em> its <code>name</code> property from
+        that variable (Lab 11's <code>name</code> again). Second, the inner name of a named
+        expression — <code>inner</code> above — is visible <em>only inside that function's own
+        body</em>, never in the surrounding scope. That makes it useful for a function that needs
+        to call itself, and gives clearer names in error stack traces.
+      </p>
+      <div class="xlang">
+        <div class="xlang-label">Cross-language note</div>
+        <p><strong>Common concept:</strong> defining a named, reusable unit of computation.</p>
+        <p><strong>Python:</strong> <code>def</code> is an ordinary statement that runs when reached — calling the function on an earlier line raises <code>NameError</code>. There is no hoisting of <code>def</code>. <code>lambda</code> is Python's expression form, limited to a single expression.</p>
+        <p><strong>JavaScript:</strong> declarations are set up early (callable above their definition); expressions are values created when their line runs, with no single-expression limit.</p>
+      </div>
+    </article>
+
+    <article class="concept-part">
+      <h3>Which should you use?</h3>
+      <p>
+        Neither is "correct." A reasonable rule of thumb: use a <strong>declaration</strong> for a
+        named helper that you want available throughout its scope, and a <strong>function
+        expression</strong> when the function is itself a value you are passing, returning, or
+        storing — for example <code>const handler = function () { ... };</code> or an argument to
+        another function (Lab 16). Whichever you choose, now you know exactly what the engine does
+        with it.
+      </p>
+      <p style="margin-bottom: 0;">
+        Two cautions. Function declarations written inside <code>if</code> blocks or loops have a
+        historically inconsistent behavior across engines — recognize them in old code, but avoid
+        writing them; use a <code>const</code> and an expression there. And <strong>arrow
+        functions</strong> (Lab 20) are a third, shorter expression syntax: they follow the
+        expression rules from this lab.
+      </p>
+    </article>
+
+    <hr class="section-divider">
+
+    <!-- ===================== LAB ===================== -->
+    <h2>Lab</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> observe directly that a declaration works before its line, and an expression does not — and that the error type depends on <code>var</code> versus <code>const</code>.</p>
+      <p style="margin-bottom: 0;"><strong>You'll need:</strong> a browser console or <code>node</code> — no project, no files.</p>
+    </div>
+
+    <div data-step-checkboxes>
+      <article class="card lab-unit">
+        <h3>Lab 1 of 1 — Call a function before it exists</h3>
+
+        <h4>Task</h4>
+        <p>Define one function each way, try to call both above their definitions, and read the errors.</p>
+
+        <h4>Instructions</h4>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 1 complete">
+            <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 1 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Paste this into a scratch file. Read it — do not run it yet.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>console.log(typeof declared);
+console.log(typeof expressed);
+
+function declared() {
+  return "I was set up early";
+}
+
+var expressed = function () {
+  return "I was assigned later";
+};
+
+console.log(typeof declared);
+console.log(typeof expressed);</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've predicted all four printed lines without running it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 2 complete">
+            <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 2 of 8</div>
+          <div class="step-body">
+            <p>Predict the four lines of output, then reveal.</p>
+            <textarea class="predict-box" rows="4" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+function
+undefined
+function
+function
+
+What you wrote: one declaration and one var-assigned expression, each
+checked with typeof before and after its definition line.
+
+What the engine effectively does: in the creation phase, "declared"
+is registered together with its finished function. "expressed" is
+registered too, but as an ordinary var, so it holds undefined until
+the assignment line runs. After that line, both are functions.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've run the snippet and it matches the revealed output.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 3 complete">
+            <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 3 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// At the very top of the file, above everything else, add two lines:
+// first log the result of calling declared(),
+// then log the result of calling expressed().</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the two calls are the first lines in the file.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 4 complete">
+            <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 4 of 8</div>
+          <div class="step-body">
+            <p>Predict what happens when you run the file now. How many lines print, and does the program finish? Then reveal.</p>
+            <textarea class="predict-box" rows="3" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+I was set up early
+TypeError: expressed is not a function   (the program stops here)
+
+What you wrote: two early calls, one to each kind of function.
+
+What the engine effectively does: declared() works because the whole
+function was built in the creation phase. expressed is a var, so at
+this point it holds undefined; calling undefined is a TypeError. The
+uncaught error halts the program, so none of the later lines run.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you can explain why exactly one of the two early calls succeeded.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 5 complete">
+            <input type="checkbox" data-step-checkbox="4" aria-label="Mark step 5 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 5 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Change "var expressed" to "const expressed".
+// Leave the two early calls at the top where they are.
+// Run the file again and read the error message carefully.</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've re-run the file with const and read the new error.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 6 complete">
+            <input type="checkbox" data-step-checkbox="5" aria-label="Mark step 6 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 6 of 8</div>
+          <div class="step-body">
+            <p>Predict the new error: is it the same type as before? What does its message say? Then reveal.</p>
+            <textarea class="predict-box" rows="3" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Result (wording varies slightly by engine):
+I was set up early
+ReferenceError: Cannot access 'expressed' before initialization
+
+What you wrote: the same early call, but expressed is now a const.
+
+What the engine effectively does: const (like let) is registered in
+the creation phase but locked in the temporal dead zone (Lab 07) until
+its declaration line runs. Touching it earlier is a ReferenceError --
+not the TypeError you got with var, where the name held undefined.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you can state which error each of var and const produce, and why.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 7 complete">
+            <input type="checkbox" data-step-checkbox="6" aria-label="Mark step 7 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 7 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Delete the two early calls at the top so the file runs cleanly.
+// Replace the expressed definition with a NAMED function expression:
+// give the function the inner name "inner", and have its body
+// return typeof inner.
+// Below the definition, log the result of calling expressed().
+// On the next line, log typeof inner (outside the function).</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the early calls are gone, the named expression is in place, and both new logs are written.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 8 complete">
+            <input type="checkbox" data-step-checkbox="7" aria-label="Mark step 8 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 8 of 8</div>
+          <div class="step-body">
+            <p>Predict the two new logged values, then reveal.</p>
+            <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output (the two new lines):
+function
+undefined
+
+What you wrote: a named function expression, checked from inside
+and from outside.
+
+What the engine effectively does: inside the function body the name
+"inner" refers to the function itself, so typeof inner is "function".
+Outside, "inner" was never added to the surrounding scope -- and
+typeof on a name that doesn't exist at all gives "undefined" instead
+of throwing (Lab 04).</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've confirmed that the inner name is visible only inside the function.</p>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== COMPREHENSION CHECKLIST ===================== -->
+    <h2>Comprehension Checklist</h2>
+    <div class="card">
+      <ul class="check-list">
+        <li>I can tell a declaration from an expression by whether the statement begins with <code>function</code>.</li>
+        <li>I can explain that a declaration's name <em>and</em> function are both ready at the start of its scope, while an expression's function only exists once its line runs.</li>
+        <li>I can predict <code>TypeError</code> for an early call to a <code>var</code>-assigned function and <code>ReferenceError</code> for <code>let</code>/<code>const</code>.</li>
+        <li>I can explain where a named function expression's inner name is and isn't visible.</li>
+        <li>I can describe how Python's <code>def</code> differs from a JavaScript declaration regarding calls placed above the definition.</li>
+      </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== POST-LAB QUIZ ===================== -->
+    <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">Which of these is a function <em>declaration</em>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-post-0" value="0"> <code>var run = function () {};</code> on its own line</label>
+            <label><input type="radio" name="lab12-post-0" value="1"> <code>setTimeout(function () {}, 0);</code> as a call</label>
+            <label><input type="radio" name="lab12-post-0" value="2"> <code>function run() {}</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Only the first starts with the word function at statement position. The other two use function where a value is expected, which makes them expressions." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">What does this print? <code>go(); function go() { console.log("ok"); }</code></span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-post-1" value="0"> <code>ok</code></label>
+            <label><input type="radio" name="lab12-post-1" value="1"> A <code>TypeError</code></label>
+            <label><input type="radio" name="lab12-post-1" value="2"> A <code>ReferenceError</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The declaration is fully set up in the creation phase, so the early call works." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">After <code>const k = function () {};</code>, what is <code>k.name</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-post-2" value="0"> An empty string</label>
+            <label><input type="radio" name="lab12-post-2" value="1"> <code>"k"</code></label>
+            <label><input type="radio" name="lab12-post-2" value="2"> <code>"anonymous"</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Modern engines infer the name of an anonymous function expression from the variable it is assigned to." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Given <code>var m = function n() {};</code>, what does <code>typeof n</code> give at the top level?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-post-3" value="0"> A <code>ReferenceError</code>, because n is not declared</label>
+            <label><input type="radio" name="lab12-post-3" value="1"> <code>"function"</code></label>
+            <label><input type="radio" name="lab12-post-3" value="2"> <code>"undefined"</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="n is only visible inside the function. Outside, it&#x27;s an undeclared name, and typeof on an undeclared name safely gives &#x27;undefined&#x27; rather than throwing." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">Which change makes this work? <code>go(); var go = function () { console.log("hi"); };</code></span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab12-post-4" value="0"> Move the call below it</label>
+            <label><input type="radio" name="lab12-post-4" value="1"> Change <code>var</code> to <code>let</code>, keeping the call where it is</label>
+            <label><input type="radio" name="lab12-post-4" value="2"> Write <code>go()()</code> to call the result a second time</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="An expression&#x27;s function only exists after its assignment runs, so the call must come after it. Switching to let would just turn the TypeError into a ReferenceError." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== REFLECTION ===================== -->
+    <h2>Reflection Questions</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Write your own answer first — the blurred text is one possible answer, not the only correct one.
+    </p>
+
+    <div class="card">
+      <p><strong>Reflection 1 of 3.</strong> In your own words, why does <code>declared()</code> work above its definition while <code>expressed()</code> doesn't, even though both end up as functions?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          A declaration is handled in the creation phase, which builds the full function before any line runs. An expression is only evaluated when execution reaches its line, so until then the variable that will hold it is just <code>undefined</code> (or locked, for <code>let</code>/<code>const</code>).
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <p><strong>Reflection 2 of 3.</strong> If you've used Python, compare calling a function above its <code>def</code> with calling a JavaScript declaration above its definition. What does each tell you about when the function comes into existence?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          In Python, <code>def</code> is an ordinary statement that executes when reached, so the function doesn't exist before it and an early call fails with <code>NameError</code>. In JavaScript a declaration is set up before the scope's first line runs, so it exists "from the start." The same <em>word</em> (define a function) means two different moments in time.
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> Is relying on function-declaration hoisting a helpful feature or a hazard? Argue one side using what this lab showed.</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          Helpful: you can put the main story of a file at the top and helpers below. Hazardous: a reader may not realize code is calling something defined far below, and if a helper is later converted to an expression (say, <code>const helper = ...</code>), calls above it silently turn into <code>ReferenceError</code>s. A consistent style (always define before use, or always declare) avoids the surprise.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT BREAKS ===================== -->
+    <h2>What Breaks If This Understanding Is Wrong?</h2>
+    <div class="alert alert-warning">
+      If declarations and expressions feel interchangeable, Lab 13 (IIFEs) won't make sense — the extra parentheses exist purely to force the parser to treat <code>function</code> as an expression. You'll also misdiagnose "is not a function" and "before initialization" errors, which point to the two different failure paths covered here, and callbacks (Lab 16) won't make sense, since a callback is typically a function expression handed over as an argument.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT WAS LEARNED ===================== -->
+    <h2>What JavaScript Concept Was Learned Today?</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        JavaScript has two function syntaxes with different timing: a declaration is fully set up in the creation phase and callable anywhere in its scope, while an expression is a value created when its line runs and follows the hoisting rules of the variable that holds it. A named expression's own name is visible only inside itself.
+      </p>
+      <p class="concern-relate" style="margin-bottom: 0;">
+        <strong>Relates to:</strong> ƒ Functions &amp; Abstraction (4 of 10) — how do we package computation? JavaScript offers two packaging syntaxes, set up at two different moments.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Lab 13 asks a natural follow-up: if a function expression is just a value, can you create one and call it in the very same breath, without ever naming it? That's the IIFE.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>
