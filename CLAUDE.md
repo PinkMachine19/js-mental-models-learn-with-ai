@@ -257,7 +257,8 @@ live index if the two ever disagree.
   (widget/routing needs the `lab-NN-slug` shape) but are labeled "Class 1"/"Class 2" in their
   badge/title, not "Lab 01"/"Lab 02", and skip the pre-quiz/post-quiz split — an intentional,
   two-off deviation from the standard lab shape, not a pattern to extend to a "Class 3."
-- Labs 08–47 — not yet built (curriculum is now 2 classes + 45 labs = 47 numbered items total).
+- Labs 08–15 — built (Foundation complete at 10; Functions section started: 11 Functions Are Objects, 12 Declarations vs Expressions, 13 IIFEs, 14 Closures, 15 Factories/Currying/Memoization).
+- Labs 16–47 — not yet built (curriculum is now 2 classes + 45 labs = 47 numbered items total).
   Every one of them already has its landmark(s) assigned — see the mapping table above — so
   writing a new lab means adding its badge/relate lines per that table, not deciding fresh.
 
