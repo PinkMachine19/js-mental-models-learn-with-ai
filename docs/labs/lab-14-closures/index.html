@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 14 — Closures — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-13-iifes/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; next lab &rarr; <em>(Lab 15 — not written yet)</em>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Functions</span>
+      <span class="badge badge-current">Lab 14</span>
+    </div>
+    <h1>Closures</h1>
+    <p class="subtitle">
+      A function that remembers the scope it was created in — even after the function that created it has finished. The idea that makes callbacks, private state and half of everyday JavaScript work.
+    </p>
+
+    <div class="build-state">
+      <strong>What this lab produces:</strong> no files, no commit — a pure concept lab. You'll run short snippets in a console or with <code>node</code>.
+    </div>
+
+    <div class="concept-type">Concept type: <strong>Common Concept, JavaScript-Specific Rules</strong></div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="concern-badge">
+        <div class="concern-glyph">ƒ</div>
+        <div class="concern-text">
+          <span class="concern-name">FUNCTIONS &amp; ABSTRACTION</span>
+          <span class="concern-index">4 of 10</span>
+        </div>
+      </div>
+      <div class="concern-badge secondary">
+        <div class="concern-glyph">◎</div>
+        <div class="concern-text">
+          <span class="concern-name">NAMES &amp; SCOPE</span>
+          <span class="concern-index">2 of 10</span>
+        </div>
+      </div>
+    </div>
+    <p class="subtitle" style="margin-top: 10px;">
+      Once functions are values that can leave the place they were made (Lab 11), a language must decide what names they can still see. JavaScript's answer: the scope where the function was <em>defined</em> comes along with it, for as long as the function lives.
+    </p>
+
+    <!-- ===================== MENTAL MODELS (SVG) ===================== -->
+    <h2>Mental Models</h2>
+    <div class="visual-grid">
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v1t v1d">
+            <title id="v1t">A function carries a backpack of the variables it can see</title>
+            <desc id="v1d">A function box with a backpack attached to it, the backpack containing the variable count.</desc>
+            <rect x="55" y="25" width="70" height="40" rx="4" class="active"/><text x="90" y="49" class="active" style="font-size:8px;">function</text><rect x="75" y="72" width="30" height="26" rx="4"/><text x="90" y="88" style="font-size:7px;">count</text><path d="M90 65 L90 72"/><text x="90" y="112" style="font-size:7px;">its backpack</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>A Function Carries Its Defining Scope</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Every function, at the moment it's created, remembers the scope it was created in (the lexical environment link from Lab 09). Wherever the function travels afterward, that link goes with it. That function-plus-link combination is what's called a <strong>closure</strong>.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v2t v2d">
+            <title id="v2t">The call's context is popped, but the environment survives</title>
+            <desc id="v2d">A dashed outline of a popped stack frame on the left and a solid environment box holding count on the right, with an arrow from a function pointing to it.</desc>
+            <rect x="10" y="20" width="55" height="40" rx="4" style="stroke-dasharray:3 3;"/><text x="37" y="43" style="font-size:7px;">popped frame</text><rect x="95" y="20" width="70" height="40" rx="4" class="active"/><text x="130" y="43" class="active" style="font-size:8px;">env: count = 0</text><rect x="95" y="80" width="70" height="24" rx="4"/><text x="130" y="95" style="font-size:8px;">function</text><path d="M130 80 L130 60"/>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>Returning Ends the Call, Not the Variables</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>When <code>makeCounter()</code> returns, its execution context is popped off the call stack (Lab 05). But the environment holding <code>count</code> isn't thrown away, because the returned function still points to it. Memory is only reclaimed once nothing reachable refers to it.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v3t v3d">
+            <title id="v3t">Each call to the factory makes its own backpack</title>
+            <desc id="v3d">Two separate function boxes labelled a and b, each with its own separate environment box showing count 2 and count 1.</desc>
+            <rect x="12" y="22" width="60" height="26" rx="4" class="active"/><text x="42" y="38" class="active" style="font-size:8px;">a</text><rect x="12" y="58" width="60" height="22" rx="4"/><text x="42" y="73" style="font-size:7px;">count = 2</text><rect x="108" y="22" width="60" height="26" rx="4" class="active"/><text x="138" y="38" class="active" style="font-size:8px;">b</text><rect x="108" y="58" width="60" height="22" rx="4"/><text x="138" y="73" style="font-size:7px;">count = 1</text><text x="90" y="104" style="font-size:7px;">separate calls, separate scopes</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>One Call, One Fresh Scope</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>Each call to <code>makeCounter()</code> creates a brand-new environment with its own <code>count</code>. The functions it hands back each point at their own, so two counters never interfere with each other.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: a key to a locker</title>
+            <desc id="v4d">A locker box with a variable inside, a key attached to a function box, and a person-shaped figure outside with no key unable to open the locker.</desc>
+            <rect x="95" y="20" width="70" height="60" rx="4"/><text x="130" y="40" style="font-size:8px;">locker</text><text x="130" y="60" style="font-size:8px;">count = 3</text><rect x="12" y="38" width="55" height="26" rx="4" class="active"/><text x="39" y="54" class="active" style="font-size:8px;">function</text><path d="M67 51 L95 51" class="active"/><text x="39" y="92" style="font-size:7px;">holds the key</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: The Function Holds a Key</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>The variables live in a locker. The returned function carries the only key. Outside code can see the function but not the locker's contents. And the locker stays in the building for as long as anyone still holds a key.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">Misconception: a closure copies the value it saw</title>
+            <desc id="v5d">A red X over a snapshot copy of a value and a green check over a live link arrow pointing at a variable that has changed.</desc>
+            <text x="40" y="38" style="font-size:16px;">✕</text><text x="40" y="58" style="font-size:7px;">copy of x = 1</text><text x="130" y="38" class="active" style="font-size:16px;">✓</text><rect x="105" y="48" width="50" height="22" rx="4" class="active"/><text x="130" y="63" class="active" style="font-size:8px;">x (now 2)</text><text x="90" y="100" style="font-size:7px;">it follows the variable itself</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: "It Remembers the Value It Saw"</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A closure holds on to the <em>variable</em>, not a snapshot of its value. If the variable changes later, the function sees the new value. That one fact explains the classic loop bug later in this lab.</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 4</strong> — I can explain why a variable of a finished function call is still usable by a function that was created inside it.</li>
+        <li><strong>Objective 2 of 4</strong> — I can predict, for a factory function, whether two returned functions share a variable or each have their own.</li>
+        <li><strong>Objective 3 of 4</strong> — I can predict what a closure sees when the captured variable changes after the function was created.</li>
+        <li><strong>Objective 4 of 4</strong> — I can explain, with both <code>var</code> and <code>let</code>, why functions created in a loop do or don't all see the same value.</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PRE-LAB QUIZ ===================== -->
+    <h2>Pre-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Answer from intuition first. Getting these wrong is fine — the point is to commit to a guess.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">A function <code>makeCounter</code> declares <code>var count = 0</code> and returns an inner function that increments <code>count</code>. After <code>makeCounter()</code> has returned, can the inner function still use <code>count</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-pre-0" value="0"> Yes, it still has access</label>
+            <label><input type="radio" name="lab14-pre-0" value="1"> No — the variable was destroyed when the call ended</label>
+            <label><input type="radio" name="lab14-pre-0" value="2"> Only if <code>count</code> had been declared as a global variable</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A function remembers the scope it was created in, so its variables stay reachable for as long as the function does." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">Calling <code>makeCounter()</code> twice gives you counters <code>a</code> and <code>b</code>. After calling <code>a()</code> twice, what does the first call to <code>b()</code> return?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-pre-1" value="0"> 3 — because a and b share one count between them</label>
+            <label><input type="radio" name="lab14-pre-1" value="1"> 1</label>
+            <label><input type="radio" name="lab14-pre-1" value="2"> 2 — because b continues counting where a stopped</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Each call to makeCounter creates a fresh scope with its own count, so the two counters are independent." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">From outside, what does <code>typeof count</code> give, where <code>count</code> only exists inside <code>makeCounter</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-pre-2" value="0"> <code>"number"</code></label>
+            <label><input type="radio" name="lab14-pre-2" value="1"> It throws a <code>TypeError</code></label>
+            <label><input type="radio" name="lab14-pre-2" value="2"> <code>"undefined"</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="count isn&#x27;t in any scope the outside code can reach, so it&#x27;s an undeclared name there. Only the returned function can touch it." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">An inner function returns <code>x</code>. After it's created, the outer code runs <code>x = 2</code> (it was <code>1</code> before). What does the inner function now return?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-pre-3" value="0"> 2</label>
+            <label><input type="radio" name="lab14-pre-3" value="1"> 1 — it saved the value from when it was created</label>
+            <label><input type="radio" name="lab14-pre-3" value="2"> undefined, because x was reassigned</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Closures capture variables, not values. The function reads whatever the variable currently holds." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">Three functions are created in a <code>for (var i = 0; i &lt; 3; i++)</code> loop, each returning <code>i</code>. Called after the loop, what do they return?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-pre-4" value="0"> 0, 1, 2</label>
+            <label><input type="radio" name="lab14-pre-4" value="1"> 3, 3, 3</label>
+            <label><input type="radio" name="lab14-pre-4" value="2"> undefined, undefined, undefined</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="There&#x27;s only one var i for the whole loop, and every function refers to it. By the time they run, it holds 3." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== CONCEPT ===================== -->
+    <h2>The Concept</h2>
+
+    <article class="concept-part">
+      <h3>The puzzle</h3>
+      <p>
+        Lab 05 told us that when a function returns, its execution context is popped off the call
+        stack and it's gone. Lab 09 told us each function has a link to the scope where it was
+        <em>defined</em>. Put those together and a question appears:
+      </p>
+      <pre><code>function makeCounter() {
+  var count = 0;
+  return function () {
+    count++;
+    return count;
+  };
+}
+
+var a = makeCounter();   // makeCounter has finished and returned...
+a();                     // ...so how can this still see count?</code></pre>
+      <p style="margin-bottom: 0;">
+        The answer is that the context was popped, but the <em>variables</em> weren't discarded.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>What a closure is</h3>
+      <p>
+        A <strong>closure</strong> is a function together with a reference to the lexical
+        environment (Lab 09) it was created in. "Lexical" means decided by where the code is
+        written, not by who calls it. The function was written inside <code>makeCounter</code>, so
+        wherever it later goes — returned, stored, passed as an argument — it can still look up
+        <code>count</code> through that link.
+      </p>
+      <p style="margin-bottom: 0;">
+        Technically <em>every</em> function in JavaScript is a closure; there's no special syntax
+        to "make" one. People use the word for the interesting case: a function that is used
+        <strong>outside</strong> the scope where it was made, which is exactly when the remembered
+        scope matters.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>What the engine is doing</h3>
+      <ol>
+        <li>Calling <code>makeCounter()</code> creates an execution context (Lab 05) and a new environment holding <code>count = 0</code>.</li>
+        <li>The inner function is created. As with every function, it stores a hidden link to the environment current at that moment.</li>
+        <li>The inner function is returned. The call finishes and the execution context is popped.</li>
+        <li>The environment is <strong>not</strong> thrown away, because the returned function still refers to it. Memory is reclaimed only when nothing reachable refers to something — called <em>garbage collection</em>, revisited in Lab 38.</li>
+        <li>Each later call <code>a()</code> creates its own short-lived context for the inner function, whose scope chain (Lab 09) leads out to that surviving environment and finds <code>count</code>.</li>
+      </ol>
+      <p style="margin-bottom: 0;">
+        Because step 1 happens on every call, <code>var b = makeCounter();</code> makes a different
+        environment with a different <code>count</code>. That's what makes private, per-instance
+        state possible with no classes at all: nothing outside can reach <code>count</code> except
+        through the function that holds the key.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Variables are captured, not values</h3>
+      <p>
+        The closure refers to the variable itself. If the variable changes after the function was
+        created, the function sees the change:
+      </p>
+      <pre><code>function makeReader() {
+  var x = 1;
+  function get() { return x; }
+  x = 2;                 // changed AFTER get was created
+  return get;
+}
+
+makeReader()();          // 2, not 1</code></pre>
+      <div class="xlang">
+        <div class="xlang-label">Cross-language note</div>
+        <p><strong>Common concept:</strong> closures — functions capturing variables from enclosing scopes.</p>
+        <p><strong>Python:</strong> has closures too, but an inner function that wants to <em>reassign</em> an outer variable must declare it <code>nonlocal</code>; otherwise assignment makes a new local.</p>
+        <p><strong>C#:</strong> lambdas capture variables (not values), with the same "single shared loop variable" trap in a <code>for</code> loop.</p>
+        <p><strong>JavaScript:</strong> assignment to a captured variable just works — no declaration needed — because the scope chain is searched for the existing binding.</p>
+      </div>
+    </article>
+
+    <article class="concept-part">
+      <h3>The classic loop trap — and why let fixes it</h3>
+      <pre><code>var fns = [];
+for (var i = 0; i &lt; 3; i++) {
+  fns.push(function () { return i; });
+}
+fns[0]();   // 3
+fns[1]();   // 3
+fns[2]();   // 3</code></pre>
+      <p>
+        <code>var i</code> is function-scoped (Lab 07): there's <em>one</em> <code>i</code> for
+        the entire loop, and all three functions hold the same variable. By the time they're
+        called, the loop has finished and left it at 3. Change <code>var</code> to
+        <code>let</code> and the results become 0, 1, 2: a <code>let</code> in a loop header gets a
+        fresh binding for each iteration, so each function captures its own. Before
+        <code>let</code>, the fix was an IIFE (Lab 13) that took <code>i</code> as a parameter,
+        creating a new scope per iteration.
+      </p>
+      <p style="margin-bottom: 0;">
+        <strong>Cost:</strong> a captured environment stays in memory as long as any function
+        referring to it does. That's usually exactly what you want, but a long-lived function
+        that captures a large value keeps that value alive too.
+      </p>
+    </article>
+
+    <hr class="section-divider">
+
+    <!-- ===================== LAB ===================== -->
+    <h2>Lab</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> watch private state survive after a function returns, then see how captured variables behave in a loop with <code>var</code> and with <code>let</code>.</p>
+      <p style="margin-bottom: 0;"><strong>You'll need:</strong> a browser console or <code>node</code> — no project, no files.</p>
+    </div>
+
+    <div data-step-checkboxes>
+      <article class="card lab-unit">
+        <h3>Lab 1 of 1 — Make a counter, then break a loop</h3>
+
+        <h4>Task</h4>
+        <p>Build the counter factory, test what it captures, then reproduce the loop trap and fix it.</p>
+
+        <h4>Instructions</h4>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 1 complete">
+            <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 1 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Paste this into a scratch file. Read it — do not run it yet.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>function makeCounter() {
+  var count = 0;
+  return function () {
+    count++;
+    return count;
+  };
+}
+
+var a = makeCounter();
+var b = makeCounter();
+
+console.log(a());
+console.log(a());
+console.log(b());
+console.log(typeof count);</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've predicted all four printed lines without running it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 2 complete">
+            <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 2 of 8</div>
+          <div class="step-body">
+            <p>Predict the four lines of output, then reveal.</p>
+            <textarea class="predict-box" rows="4" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+1
+2
+1
+undefined
+
+What you wrote: a factory that returns an incrementing function, called
+twice to make two separate counters.
+
+What the engine effectively does: each makeCounter() call creates its
+own environment with its own count. a's inner function keeps its
+environment alive, so it counts 1, 2. b has a separate environment,
+so it starts again at 1. The top-level code can't see count at all
+(typeof on an unseen name gives "undefined", Lab 04).</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've run it and the output matches.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 3 complete">
+            <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 3 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Below the existing code, declare a function named makeReader
+// with no parameters.
+// Inside it: declare var x = 1;
+// declare an inner function named get with no parameters that returns x;
+// THEN, after get is declared, assign x = 2;
+// return get (no parentheses).
+// Declare var read = makeReader(); and log read().</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the new function is written and read() is logged.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 4 complete">
+            <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 4 of 8</div>
+          <div class="step-body">
+            <p>Predict what read() logs — 1 or 2? Then reveal.</p>
+            <textarea class="predict-box" rows="2" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output (the new line):
+2
+
+What you wrote: an inner function created while x was 1, with x
+changed to 2 afterward.
+
+What the engine effectively does: get doesn't store the value 1. It
+stores a link to the environment where x lives, and looks x up when
+it is called. By then x is 2.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've confirmed the closure reads the current value.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 5 complete">
+            <input type="checkbox" data-step-checkbox="4" aria-label="Mark step 5 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 5 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Below everything, declare var fns = [];
+// Write a for loop: var i = 0; while i is less than 3; i++.
+// In each iteration, push a new function onto fns that returns i.
+// After the loop, log fns[0](), then fns[1](), then fns[2]()
+// each on its own line.</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the loop and the three logs are written.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 6 complete">
+            <input type="checkbox" data-step-checkbox="5" aria-label="Mark step 6 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 6 of 8</div>
+          <div class="step-body">
+            <p>Predict what the three calls return — and why. Then reveal.</p>
+            <textarea class="predict-box" rows="3" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+3
+3
+3
+
+What you wrote: three functions created in a var loop, each returning i.
+
+What the engine effectively does: var i lives in one place for the
+whole loop (function scope, Lab 07), so all three functions closed over
+the same variable. When the loop ends, i is 3, and every function
+reads it after the fact.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you can explain why all three print 3.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 7 complete">
+            <input type="checkbox" data-step-checkbox="6" aria-label="Mark step 7 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 7 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// In the for loop header only, change "var i" to "let i".
+// Leave the rest of the loop and the three logs unchanged.
+// Run the file again.</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the header says let i and you've re-run the file.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 8 complete">
+            <input type="checkbox" data-step-checkbox="7" aria-label="Mark step 8 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 8 of 8</div>
+          <div class="step-body">
+            <p>Predict the new three values and explain what let does differently, then reveal.</p>
+            <textarea class="predict-box" rows="3" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+0
+1
+2
+
+What you wrote: the same loop, with let in the header.
+
+What the engine effectively does: a let declared in a for header gets
+a fresh binding for every iteration, so each pushed function closes
+over its own i (0, then 1, then 2). Before let existed, the same result
+required an IIFE (Lab 13) that took i as a parameter.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've confirmed 0, 1, 2 and can say why.</p>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== COMPREHENSION CHECKLIST ===================== -->
+    <h2>Comprehension Checklist</h2>
+    <div class="card">
+      <ul class="check-list">
+        <li>I can explain that a closure is a function plus a link to the scope where it was created, not a special kind of function.</li>
+        <li>I can explain why <code>count</code> survives after <code>makeCounter()</code> returns, in terms of the call stack and the environment.</li>
+        <li>I can predict that two calls to a factory give independent private state.</li>
+        <li>I can explain why a closure sees later changes to a captured variable.</li>
+        <li>I can explain the <code>var</code> loop trap and why <code>let</code> fixes it.</li>
+      </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== POST-LAB QUIZ ===================== -->
+    <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">Which best describes a closure?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-post-0" value="0"> A function called right after being created</label>
+            <label><input type="radio" name="lab14-post-0" value="1"> A function declared with no parameters at all</label>
+            <label><input type="radio" name="lab14-post-0" value="2"> A function plus its defining scope</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A closure is a function together with the scope it was created in; there&#x27;s no special syntax involved." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt"><code>function outer() { var n = 10; return function () { n += 1; return n; }; }</code> and <code>var f = outer();</code> — what does the third call <code>f()</code> return?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-post-1" value="0"> 13</label>
+            <label><input type="radio" name="lab14-post-1" value="1"> 11</label>
+            <label><input type="radio" name="lab14-post-1" value="2"> 10</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="n lives in a single environment that persists between calls: 11, then 12, then 13." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">After switching the lab's loop header to <code>let i</code>, what do the three stored functions return?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-post-2" value="0"> 3, 3, 3</label>
+            <label><input type="radio" name="lab14-post-2" value="1"> 0, 1, 2</label>
+            <label><input type="radio" name="lab14-post-2" value="2"> undefined, undefined, undefined</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A let in a loop header makes a new binding per iteration, so each function captures its own i." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Given <code>var g = outer(); var h = outer();</code> from the earlier question, do <code>g</code> and <code>h</code> share <code>n</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-post-3" value="0"> Yes — there is only one n for the whole program</label>
+            <label><input type="radio" name="lab14-post-3" value="1"> Only if they are called back to back</label>
+            <label><input type="radio" name="lab14-post-3" value="2"> No — each outer() call creates its own n</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Every call to the factory creates a fresh environment, so the returned functions carry separate private variables." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">How long does a captured scope stay in memory?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab14-post-4" value="0"> While a reachable function refers to it</label>
+            <label><input type="radio" name="lab14-post-4" value="1"> Until the program ends, no matter what</label>
+            <label><input type="radio" name="lab14-post-4" value="2"> Only until the outer function has finished returning</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The engine only reclaims memory nothing can reach. A returned function that&#x27;s still referenced keeps its scope alive; once it&#x27;s unreachable, the scope can be collected." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== REFLECTION ===================== -->
+    <h2>Reflection Questions</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Write your own answer first — the blurred text is one possible answer, not the only correct one.
+    </p>
+
+    <div class="card">
+      <p><strong>Reflection 1 of 3.</strong> Explain closures to someone who knows functions but has never heard the word, using an analogy of your own (not the key and locker).</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          A closure is a function that remembers where it was born. Imagine a traveller who leaves home with a bag containing items from the house they grew up in: wherever they go, they can still reach into the bag, and nobody else can. The function is the traveller; the scope it was created in is the bag.
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <p><strong>Reflection 2 of 3.</strong> In your own words, why does a <code>var</code> loop give 3, 3, 3 while a <code>let</code> loop gives 0, 1, 2?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          With <code>var</code> there is one variable <code>i</code> shared by every iteration, and all three functions point at it, so they all see its final value after the loop. With <code>let</code> each iteration gets its own fresh <code>i</code>, so each function closes over a different variable that never changes again.
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> A closure keeps a captured value alive for as long as the function exists. Give one situation where that is exactly what you want, and one where it might be a problem.</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          Wanted: private state, such as a counter or a cache that must persist between calls. Problem: a long-lived function that only needs one small value but captures a scope containing a very large array or object, keeping that memory from ever being reclaimed. (Engines can avoid retaining variables that no function uses, but a variable that is captured stays alive as long as the function does.)
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT BREAKS ===================== -->
+    <h2>What Breaks If This Understanding Is Wrong?</h2>
+    <div class="alert alert-warning">
+      Callbacks (Lab 16), event handlers, timers and promises all rely on a function running later and still seeing the variables around where it was written — if you think those variables vanish when the outer function returns, every async example in the course will look broken. Lab 15 (factories, currying, memoization) is closures applied directly, and the later <code>this</code> labs depend on knowing which things are looked up through scope (variables) and which are not.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT WAS LEARNED ===================== -->
+    <h2>What JavaScript Concept Was Learned Today?</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        A closure is a function plus the scope it was created in. When an outer call finishes its execution context goes away, but any environment still referred to by a surviving function is kept alive, giving that function private, persistent state. Closures hold variables, not copies — which is why a <code>var</code> loop produces shared state and a <code>let</code> loop doesn't.
+      </p>
+      <p class="concern-relate" style="margin-bottom: 0;">
+        <strong>Relates to:</strong> ƒ Functions &amp; Abstraction (4 of 10) + ◎ Names &amp; Scope (2 of 10) — functions that travel need a rule for which names they can still see; JavaScript's is "the scope where you were defined."
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Lab 15 puts closures to work: factory functions that build customized functions, currying that feeds arguments in one at a time, and memoization that remembers earlier results — three patterns that are all just closures.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>
