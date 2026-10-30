@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab 15 — Closures in Practice: Factories, Currying &amp; Memoization — JS Mental Models</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <script defer src="../../lab.js"></script>
+  <script defer src="../../bookmark-widget.js"></script>
+  <script defer src="../../notes-widget.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">🟨 JS Mental Models</a>
+    <a href="../index.html" class="active">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p class="subtitle" style="margin-bottom: 6px;">
+      <a href="../index.html">&larr; all labs</a>
+      &nbsp;&middot;&nbsp; <a href="../lab-14-closures/index.html">&larr; prev lab</a>
+      &nbsp;&middot;&nbsp; next lab &rarr; <em>(Lab 16 — not written yet)</em>
+    </p>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Functions</span>
+      <span class="badge badge-current">Lab 15</span>
+    </div>
+    <h1>Closures in Practice: Factories, Currying &amp; Memoization</h1>
+    <p class="subtitle">
+      Three famous-sounding patterns, one underlying mechanism. Build each from nothing, and closures stop being an abstract rule and become a toolkit.
+    </p>
+
+    <div class="build-state">
+      <strong>What this lab produces:</strong> no files, no commit — a pure concept lab. You'll run short snippets in a console or with <code>node</code>.
+    </div>
+
+    <div class="concept-type">Concept type: <strong>Common Concept, JavaScript-Specific Rules</strong></div>
+
+    <div class="concern-badge">
+        <div class="concern-glyph">ƒ</div>
+        <div class="concern-text">
+          <span class="concern-name">FUNCTIONS &amp; ABSTRACTION</span>
+          <span class="concern-index">4 of 10</span>
+        </div>
+      </div>
+    <p class="subtitle" style="margin-top: 10px;">
+      Once a function can carry private state with it (Lab 14), you can use it to build other functions, feed arguments in over time, and remember earlier answers. This lab shows JavaScript's everyday idioms for each.
+    </p>
+
+    <!-- ===================== MENTAL MODELS (SVG) ===================== -->
+    <h2>Mental Models</h2>
+    <div class="visual-grid">
+
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v1t v1d">
+            <title id="v1t">A factory stamps out customized functions</title>
+            <desc id="v1d">A machine box labelled makeMultiplier with a dial set to 2 producing a function box labelled times 2, and the dial set to 3 producing another function box.</desc>
+            <rect x="10" y="38" width="62" height="40" rx="4"/><text x="41" y="55" style="font-size:7px;">factory</text><text x="41" y="68" style="font-size:7px;">(factor)</text><path d="M72 50 L105 30 M72 66 L105 86"/><rect x="105" y="18" width="62" height="24" rx="4" class="active"/><text x="136" y="34" class="active" style="font-size:8px;">× 2</text><rect x="105" y="74" width="62" height="24" rx="4" class="active"/><text x="136" y="90" class="active" style="font-size:8px;">× 3</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 1 of 5</span>A Factory Builds Functions to Order</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A factory is a function whose job is to build and return another function (or object), customized by the arguments it was called with. The customization lives in a closure, so each product remembers its own settings.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v2t v2d">
+            <title id="v2t">Currying hands arguments over one at a time</title>
+            <desc id="v2d">A chain of three boxes, each taking a single argument and producing the next box, ending in a result.</desc>
+            <rect x="8" y="42" width="44" height="30" rx="4" class="active"/><text x="30" y="60" class="active" style="font-size:8px;">f(a)</text><path d="M52 57 L62 57"/><rect x="62" y="42" width="44" height="30" rx="4" class="active"/><text x="84" y="60" class="active" style="font-size:8px;">(b)</text><path d="M106 57 L116 57"/><rect x="116" y="42" width="50" height="30" rx="4"/><text x="141" y="60" style="font-size:8px;">result</text><text x="90" y="98" style="font-size:7px;">f(a)(b) instead of f(a, b)</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 2 of 5</span>Currying: One Argument Per Call</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A curried function takes one argument and returns a function waiting for the next. Each stage remembers the arguments before it in its closure, so <code>add(2)(3)</code> works, and <code>add(2)</code> alone is a useful, reusable function.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v3t v3d">
+            <title id="v3t">Memoization keeps a notebook of past answers</title>
+            <desc id="v3d">A function box with a small notebook beside it listing input to output pairs, and an arrow from the notebook skipping the work.</desc>
+            <rect x="60" y="14" width="60" height="30" rx="4" class="active"/><text x="90" y="33" class="active" style="font-size:8px;">slow work</text><rect x="14" y="62" width="70" height="44" rx="4"/><text x="49" y="78" style="font-size:7px;">notebook</text><text x="49" y="92" style="font-size:7px;">4 → 16</text><path d="M84 72 L130 72 L130 90" /><text x="148" y="94" style="font-size:7px;">reuse</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 3 of 5</span>Memoization: Look It Up Before You Compute It</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A memoized function stores each result in a private cache the first time it computes it. The next call with the same input finds the answer in the cache and skips the work entirely. The cache is just a captured variable.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v4t v4d">
+            <title id="v4t">An analogy: a coffee order, a form, and a sticky note</title>
+            <desc id="v4d">Three small panels: a coffee machine with a preset button for a factory, a form being filled in pieces for currying, and a sticky note with an answer for memoization.</desc>
+            <rect x="8" y="30" width="50" height="50" rx="4" class="active"/><text x="33" y="58" class="active" style="font-size:7px;">presets</text><rect x="68" y="30" width="44" height="50" rx="4"/><text x="90" y="52" style="font-size:7px;">form</text><text x="90" y="64" style="font-size:7px;">in steps</text><rect x="122" y="30" width="50" height="50" rx="4" class="active"/><text x="147" y="58" class="active" style="font-size:7px;">sticky note</text><text x="90" y="100" style="font-size:7px;">preset · step by step · remembered</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 4 of 5</span>An Analogy: Presets, Forms and Sticky Notes</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>A factory is a machine with a preset button ("large oat latte") built to your settings. Currying is a long form you fill in across several visits, saving what you've entered so far. Memoization is the sticky note you leave on the fridge so you don't redo the sum next time.</p></div>
+      </div>
+      <div class="visual-card">
+        <div class="visual-art">
+          <svg viewBox="0 0 180 120" role="img" aria-labelledby="v5t v5d">
+            <title id="v5t">Misconception: these are three different JavaScript features</title>
+            <desc id="v5d">A single box labelled closure with three arrows pointing out to factory, currying and memoization, with a red X next to three separate features.</desc>
+            <rect x="55" y="12" width="70" height="26" rx="4" class="active"/><text x="90" y="29" class="active" style="font-size:8px;">closure</text><path d="M90 38 L90 52 M90 52 L35 70 M90 52 L145 70"/><text x="30" y="84" style="font-size:7px;">factory</text><text x="90" y="84" style="font-size:7px;">currying</text><text x="148" y="84" style="font-size:7px;">memo</text><text x="90" y="108" style="font-size:7px;">one mechanism, three habits</text>
+          </svg>
+        </div>
+        <h3><span class="concern-index" style="display:block; margin-bottom:2px;">Mental Model 5 of 5</span>Misconception: "These Need Special Language Support"</h3>
+        <button type="button" aria-expanded="false"><span>Explanation</span><small>Reveal</small></button>
+        <div hidden><p>There's no <code>curry</code> keyword or <code>memoize</code> feature in JavaScript. Each pattern is an ordinary function that returns a function, relying only on the closures from Lab 14. Seeing that is what stops them from feeling like magic.</p></div>
+      </div>
+
+    </div>
+
+    <!-- ===================== LEARNING OBJECTIVES ===================== -->
+    <h2>Learning Objectives</h2>
+    <div class="card">
+      <ol style="margin-bottom: 0;">
+        <li><strong>Objective 1 of 4</strong> — I can write a factory function that returns a function customized by its argument, and explain where the customization is stored.</li>
+        <li><strong>Objective 2 of 4</strong> — I can write and call a curried function, and explain what <code>add(10)</code> alone gives back.</li>
+        <li><strong>Objective 3 of 4</strong> — I can write a simple memoizer and explain why the second call with the same input doesn't recompute.</li>
+        <li><strong>Objective 4 of 4</strong> — I can explain when memoization is unsafe, and what the cache costs.</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== PRE-LAB QUIZ ===================== -->
+    <h2>Pre-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Answer from intuition first. Getting these wrong is fine — the point is to commit to a guess.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">If <code>makeMultiplier(factor)</code> returns a function that multiplies by <code>factor</code>, do <code>makeMultiplier(2)</code> and <code>makeMultiplier(3)</code> interfere with each other?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-pre-0" value="0"> No — each remembers its own factor</label>
+            <label><input type="radio" name="lab15-pre-0" value="1"> Yes — the latest call overwrites the earlier factor</label>
+            <label><input type="radio" name="lab15-pre-0" value="2"> Only if called in the same line</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Each call to the factory creates a separate environment (Lab 14), so each returned function keeps its own factor." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">If <code>add</code> is written so that <code>add(2)</code> returns another function, what does <code>typeof add(2)</code> report?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-pre-1" value="0"> <code>"number"</code></label>
+            <label><input type="radio" name="lab15-pre-1" value="1"> <code>"function"</code></label>
+            <label><input type="radio" name="lab15-pre-1" value="2"> <code>"undefined"</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A call returns whatever the function returns, and here that&#x27;s a function waiting for its second argument." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">An expensive function is called twice with the same argument. How could the second call be made nearly instant?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-pre-2" value="0"> Rewrite the function so that it runs faster</label>
+            <label><input type="radio" name="lab15-pre-2" value="1"> Simply skip calling the function a second time</label>
+            <label><input type="radio" name="lab15-pre-2" value="2"> Save the first answer</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Remembering a previous answer so that it can be returned without recomputing is called memoization." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">Where can a memoizer keep its saved results without using a global variable?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-pre-3" value="0"> In a variable captured by a closure</label>
+            <label><input type="radio" name="lab15-pre-3" value="1"> On the browser's window object only</label>
+            <label><input type="radio" name="lab15-pre-3" value="2"> Nowhere — a function can't remember anything</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="The returned function closes over a private cache created by the memoizer — nothing outside can reach it." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">If <code>function f(a) { return function (b) { return a - b; }; }</code>, what is <code>f(10)(3)</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-pre-4" value="0"> -7</label>
+            <label><input type="radio" name="lab15-pre-4" value="1"> 7</label>
+            <label><input type="radio" name="lab15-pre-4" value="2"> A function</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="f(10) returns the inner function with a = 10 captured; calling it with 3 gives 10 - 3." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== CONCEPT ===================== -->
+    <h2>The Concept</h2>
+
+    <article class="concept-part">
+      <h3>One mechanism, three habits</h3>
+      <p>
+        Lab 14 established the mechanism: a function remembers the scope it was created in, so
+        variables from a finished call can live on, private, inside a returned function. This lab
+        is about three recurring ways to use that. None of them needs special syntax — each is a
+        function that returns a function.
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Factories: functions that build functions</h3>
+      <p>
+        A <strong>factory</strong> is a function whose job is to create and return something
+        customized — most often another function, sometimes an object:
+      </p>
+      <pre><code>function makeMultiplier(factor) {
+  return function (n) {
+    return n * factor;
+  };
+}
+
+var twice  = makeMultiplier(2);
+var thrice = makeMultiplier(3);
+twice(5);    // 10
+thrice(5);   // 15</code></pre>
+      <p>
+        <code>factor</code> is a parameter of <code>makeMultiplier</code>; after the call
+        finishes, it lives on inside each returned function's closure. A factory can also return
+        several functions that share one private variable:
+      </p>
+      <pre><code>function makeAccount(start) {
+  var balance = start;
+  return {
+    deposit: function (n) { balance += n; return balance; },
+    read:    function ()  { return balance; }
+  };
+}</code></pre>
+      <p style="margin-bottom: 0;">
+        Nothing outside can change <code>balance</code> except through <code>deposit</code> — the
+        private-state benefit from Lab 14, now packaged as a reusable constructor of small
+        objects. (Later labs show other ways to build objects, classes included; the factory is
+        the lightest one.)
+      </p>
+    </article>
+
+    <article class="concept-part">
+      <h3>Currying and partial application</h3>
+      <p>
+        <strong>Currying</strong> (named after the mathematician Haskell Curry) turns a function
+        of several arguments into a chain of functions that each take one:
+      </p>
+      <pre><code>function add(a) {
+  return function (b) {
+    return a + b;
+  };
+}
+
+add(2)(3);          // 5
+var addTen = add(10);   // a new function, waiting for b
+addTen(5);          // 15
+addTen(20);         // 30</code></pre>
+      <p>
+        The inner function holds <code>a</code> in its closure. The payoff is
+        <code>addTen</code>: calling <code>add</code> with just the first argument gives you a
+        specialized, reusable function. Giving a function some of its arguments now and getting
+        back a function that wants the rest is called <strong>partial application</strong>. The
+        two are related but not identical: currying always works one argument per call, while
+        partial application can fix any number at once (and Lab 19's <code>bind</code> does it
+        too).
+      </p>
+      <div class="xlang">
+        <div class="xlang-label">Cross-language note</div>
+        <p><strong>Common concept:</strong> partial application — fixing some arguments ahead of time.</p>
+        <p><strong>Python:</strong> provides it in the standard library as <code>functools.partial</code>; writing curried chains by hand is unusual.</p>
+        <p><strong>JavaScript:</strong> no library needed — closures make the hand-written version a few lines, so you will see it in real code.</p>
+      </div>
+    </article>
+
+    <article class="concept-part">
+      <h3>Memoization: remember, don't recompute</h3>
+      <p>
+        <strong>Memoization</strong> (from "memo": a note to self) wraps a function so that its
+        results are saved, keyed by the input, and returned from the saved copy when the same
+        input comes in again:
+      </p>
+      <pre><code>function memoize(fn) {
+  var cache = {};
+  return function (n) {
+    if (cache.hasOwnProperty(n)) { return cache[n]; }
+    var result = fn(n);
+    cache[n] = result;
+    return result;
+  };
+}</code></pre>
+      <p>
+        <code>cache</code> is created once when <code>memoize</code> runs and is then captured by
+        the returned function: it persists between calls, and nothing else can touch it. Three
+        honest caveats:
+      </p>
+      <ul>
+        <li><strong>Only for pure functions</strong> — those whose result depends only on their inputs and which do nothing else. Memoizing something that reads the clock, generates random numbers, or changes outside state returns stale answers.</li>
+        <li><strong>The cache grows without limit,</strong> and holds everything it stores for as long as the function exists (memory, Lab 38). Later collections (<code>Map</code>, Lab 37) make cleaner caches.</li>
+        <li><strong>Object keys are strings,</strong> so inputs <code>1</code> and <code>"1"</code> land on the same cache entry; this simple version also handles one argument only.</li>
+      </ul>
+      <p style="margin-bottom: 0;">
+        <strong>Where the engine is involved:</strong> in all three patterns, the same thing
+        happens. A call creates an environment; an inner function is created with a link to it; the
+        call returns, but the environment survives because that inner function is still reachable.
+        Only the contents of the environment differ: a <code>factor</code>, an <code>a</code>, a
+        <code>cache</code>.
+      </p>
+    </article>
+
+    <hr class="section-divider">
+
+    <!-- ===================== LAB ===================== -->
+    <h2>Lab</h2>
+    <div class="card">
+      <p><strong>Primary objective:</strong> build a factory, a curried function and a memoizer, and see the cache avoid the second computation — and see it go wrong on a function that isn't pure.</p>
+      <p style="margin-bottom: 0;"><strong>You'll need:</strong> a browser console or <code>node</code> — no project, no files.</p>
+    </div>
+
+    <div data-step-checkboxes>
+      <article class="card lab-unit">
+        <h3>Lab 1 of 1 — Build three closure habits</h3>
+
+        <h4>Task</h4>
+        <p>Write each pattern from comments, predict its output, and then break the memoizer on purpose.</p>
+
+        <h4>Instructions</h4>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 1 complete">
+            <input type="checkbox" data-step-checkbox="0" aria-label="Mark step 1 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 1 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Paste this into a scratch file. Read it — do not run it yet.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>function makeMultiplier(factor) {
+  return function (n) {
+    return n * factor;
+  };
+}
+
+var twice = makeMultiplier(2);
+var thrice = makeMultiplier(3);
+
+console.log(twice(5));
+console.log(thrice(5));
+console.log(twice(thrice(2)));</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've predicted all three printed lines without running it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 2 complete">
+            <input type="checkbox" data-step-checkbox="1" aria-label="Mark step 2 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 2 of 8</div>
+          <div class="step-body">
+            <p>Predict the three lines of output, then reveal.</p>
+            <textarea class="predict-box" rows="3" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+10
+15
+12
+
+What you wrote: a factory called twice with different arguments.
+
+What the engine effectively does: twice and thrice are two separate
+inner functions, each with a closure over its own factor (2 and 3).
+twice(5) = 10 and thrice(5) = 15. In the third line the inner call
+runs first: thrice(2) = 6, then twice(6) = 12.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you've run it and the output matches.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 3 complete">
+            <input type="checkbox" data-step-checkbox="2" aria-label="Mark step 3 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 3 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Below the existing code, declare a function named add with one
+// parameter, a. Make it return a function with one parameter, b,
+// which returns a + b.
+// Log add(2)(3).
+// Declare var addTen = add(10);
+// Log addTen(5), then log addTen(20).
+// Log typeof addTen.</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> add is written and the four logs are in place.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 4 complete">
+            <input type="checkbox" data-step-checkbox="3" aria-label="Mark step 4 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 4 of 8</div>
+          <div class="step-body">
+            <p>Predict the four new lines, then reveal.</p>
+            <textarea class="predict-box" rows="4" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output (the four new lines):
+5
+15
+30
+function
+
+What you wrote: a curried add and a partially applied addTen.
+
+What the engine effectively does: add(2) returns the inner function
+with a = 2 captured, and calling that with 3 gives 5. add(10) alone
+returns a reusable function with a = 10 captured, so addTen(5) = 15
+and addTen(20) = 30. addTen is a function value (Lab 11).</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you can say where the 10 in addTen(5) comes from.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 5 complete">
+            <input type="checkbox" data-step-checkbox="4" aria-label="Mark step 5 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 5 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Declare a function named slowSquare with one parameter, n.
+// Inside it, log the string "computing " + n, then return n * n.
+
+// Declare a function named memoize with one parameter, fn.
+// Inside: declare var cache = {};
+// return a function with one parameter, n, which:
+//   - if cache.hasOwnProperty(n), returns cache[n];
+//   - otherwise declares var result = fn(n),
+//     stores it as cache[n], and returns result.
+
+// Declare var fastSquare = memoize(slowSquare);
+// Log fastSquare(4), then fastSquare(4) again, then fastSquare(5).</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> slowSquare, memoize and the three logs are written, and the file runs without errors.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 6 complete">
+            <input type="checkbox" data-step-checkbox="5" aria-label="Mark step 6 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 6 of 8</div>
+          <div class="step-body">
+            <p>Predict the exact order of everything that prints, including the "computing" lines. Then reveal.</p>
+            <textarea class="predict-box" rows="6" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output (in order):
+computing 4
+16
+16
+computing 5
+25
+
+What you wrote: a memoizer wrapped around a noisy function.
+
+What the engine effectively does: the first fastSquare(4) finds nothing
+in cache, so it runs slowSquare (which logs "computing 4"), saves 16,
+and the outer console.log then prints 16. The second fastSquare(4)
+finds 4 in cache and returns 16 without running slowSquare, so there
+is no "computing" line. fastSquare(5) is new, so it computes again.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you can explain why exactly one 'computing 4' line appears.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 7 complete">
+            <input type="checkbox" data-step-checkbox="6" aria-label="Mark step 7 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 7 of 8</div>
+          <div class="step-body">
+            <div class="lab-instruction">
+              <p>// Edit the file yourself. Don't paste finished code — type it from these comments.</p>
+              <button class="copy-instruction-button" type="button" data-copy-instruction>Copy</button>
+            </div>
+            <pre><code>// Now break it on purpose with a function that is NOT pure.
+// Declare var calls = 0;
+// Declare a function named nextLabel with one parameter, n,
+// that increments calls and returns n + "#" + calls.
+// Declare var memoLabel = memoize(nextLabel);
+// Log memoLabel(1), then memoLabel(1) again, then nextLabel(1) directly.</code></pre>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> the impure function and its three logs are written.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <label class="step-checkbox" title="Mark step 8 complete">
+            <input type="checkbox" data-step-checkbox="7" aria-label="Mark step 8 complete"><span aria-hidden="true"></span>
+          </label>
+          <div class="step-num">Step 8 of 8</div>
+          <div class="step-body">
+            <p>Predict the three values and explain what's wrong with the second one, then reveal.</p>
+            <textarea class="predict-box" rows="4" placeholder="My prediction: ..." style="width:100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 10px 12px;"></textarea>
+            <div class="blur-solution" style="margin-top: 12px;">
+              <button type="button" aria-expanded="false"><span>Answer &amp; explanation</span><small>Reveal</small></button>
+              <pre aria-hidden="true"><code>Output:
+1#1
+1#1
+1#2
+
+What you wrote: a memoizer wrapped around a function whose result
+depends on a counter outside its input.
+
+What the engine effectively does: the first memoLabel(1) runs
+nextLabel (calls becomes 1) and caches "1#1". The second call returns
+that cached copy and never runs nextLabel -- so it's "stale": the
+counter didn't move. The direct nextLabel(1) call shows what the
+function would really have returned by then: "1#2". Memoization is
+only valid when the same input always means the same output.</code></pre>
+            </div>
+            <p class="step-complete-when"><strong>This step is complete when:</strong> you can state the rule for when memoizing is safe.</p>
+          </div>
+        </div>
+
+      </article>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== COMPREHENSION CHECKLIST ===================== -->
+    <h2>Comprehension Checklist</h2>
+    <div class="card">
+      <ul class="check-list">
+        <li>I can explain that a factory's arguments live on in the closure of each function it returns.</li>
+        <li>I can write a curried function and say what <code>add(10)</code> returns by itself.</li>
+        <li>I can describe how a memoizer's private cache survives between calls.</li>
+        <li>I can explain, with an example, why memoizing a non-pure function gives wrong answers.</li>
+        <li>I can name two costs or limits of a simple memoizer (unbounded memory, key handling).</li>
+      </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== POST-LAB QUIZ ===================== -->
+    <h2>Post-Lab Quiz</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      These are different questions from the pre-lab quiz — they test what the experiment should
+      have taught you, not the same questions again.
+    </p>
+    <div class="quiz-set" data-quiz-set data-threshold="80">
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 1 of 5</span><span class="quiz-prompt">In <code>var addTen = add(10); addTen(5);</code>, where does the <code>10</code> come from during the second call?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-post-0" value="0"> A global variable that happens to be named <code>a</code></label>
+            <label><input type="radio" name="lab15-post-0" value="1"> It is passed in again as part of the <code>addTen(5)</code> call</label>
+            <label><input type="radio" name="lab15-post-0" value="2"> The captured <code>a</code></label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="add(10) ran once and returned the inner function; the 10 stays reachable in that call&#x27;s environment through the closure." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 2 of 5</span><span class="quiz-prompt">A memoized <code>fastSquare</code> is called with 4 three times in a row. How many times does the original <code>slowSquare</code> actually run?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-post-1" value="0"> Once</label>
+            <label><input type="radio" name="lab15-post-1" value="1"> Three times</label>
+            <label><input type="radio" name="lab15-post-1" value="2"> Zero times</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Only the first call finds the cache empty; the next two return the saved result." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 3 of 5</span><span class="quiz-prompt">Which function is NOT safe to memoize?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-post-2" value="0"> One that adds two numbers</label>
+            <label><input type="radio" name="lab15-post-2" value="1"> One that returns a random number</label>
+            <label><input type="radio" name="lab15-post-2" value="2"> One that returns the square of its argument</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="1">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A random result isn&#x27;t determined by the input, so a cached value would wrongly be reused. Pure functions of their input are the safe ones." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 4 of 5</span><span class="quiz-prompt">How many separate calls does it take to use a fully curried three-argument function, like <code>mul(2)(3)(4)</code>?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-post-3" value="0"> Just one, since the arguments get bundled</label>
+            <label><input type="radio" name="lab15-post-3" value="1"> Two, since the last argument is automatic</label>
+            <label><input type="radio" name="lab15-post-3" value="2"> Three</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="2">Check answer</button>
+          <p class="quiz-feedback" data-explanation="A curried function takes one argument per call, returning another function until the last one produces the value." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+      <details class="card quiz-card" data-quiz>
+        <summary><span class="quiz-label">Question 5 of 5</span><span class="quiz-prompt">What does each call to a factory like <code>makeMultiplier</code> produce?</span><span class="quiz-expand-hint">Open question</span></summary>
+        <div class="quiz-card-body">
+          <div class="answers">
+            <label><input type="radio" name="lab15-post-4" value="0"> A new function</label>
+            <label><input type="radio" name="lab15-post-4" value="1"> The same shared function every time, with factor overwritten</label>
+            <label><input type="radio" name="lab15-post-4" value="2"> Only a copy of the number, not a function</label>
+          </div>
+          <button class="btn" type="button" data-check-answer data-correct="0">Check answer</button>
+          <p class="quiz-feedback" data-explanation="Every call makes a new environment, so each returned function is independent with its own private settings." role="status" aria-live="polite"></p>
+        </div>
+      </details>
+
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== REFLECTION ===================== -->
+    <h2>Reflection Questions</h2>
+    <p class="subtitle" style="margin-bottom: 16px;">
+      Write your own answer first — the blurred text is one possible answer, not the only correct one.
+    </p>
+
+    <div class="card">
+      <p><strong>Reflection 1 of 3.</strong> Pick one of the three patterns (factory, currying, memoization) and describe a real task from your own experience where it would fit well.</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          A factory suits building several similar helpers from configuration, like a <code>makeLogger(prefix)</code> that returns a function adding a prefix to messages. Currying suits reusing a general function with its first argument fixed, such as a <code>discount(rate)</code> function applied to many prices. Memoization suits a slow, repeated pure calculation like looking up the same lookup table value or computing a recursive result such as Fibonacci.
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <p><strong>Reflection 2 of 3.</strong> Explain, in your own words, why memoizing the <code>nextLabel</code> function from the lab gave a wrong second answer. What property must a function have to be safely memoized?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          The cached answer was reused without running the function, so the counter outside it didn't advance, and the answer no longer matched what the function would return. A function must be <em>pure</em>: given the same input it always returns the same output, and it has no other effects that someone relies on happening each call.
+        </p>
+      </div>
+    </div>
+    <div class="card">
+      <p><strong>Reflection 3 of 3.</strong> The memoizer's cache never shrinks. If this function runs for hours with millions of different inputs, what could go wrong, and what is one way you could limit it?</p>
+      <div class="blur-reflection">
+        <button type="button" aria-expanded="false"><span>One possible answer</span><small>Reveal</small></button>
+        <p class="blur-reflection-answer" aria-hidden="true">
+          The cache keeps every result alive for as long as the memoized function exists, so memory use can grow without bound. You could limit it by capping the number of stored entries (discarding the oldest), clearing it periodically, or using a collection built for this such as <code>Map</code> (Lab 37) or, for object keys that should be reclaimable, <code>WeakMap</code> (Lab 38).
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT BREAKS ===================== -->
+    <h2>What Breaks If This Understanding Is Wrong?</h2>
+    <div class="alert alert-warning">
+      Without seeing these as ordinary closures, patterns in real codebases — configured helper functions, handlers with preset arguments, cached lookups — look like unrelated tricks. Callbacks (Lab 16) often arrive as factory-built functions, <code>bind</code> (Lab 19) is partial application under another name, and the later cache-related labs (<code>Map</code>, <code>WeakMap</code>) assume you've already seen why a cache is worth building.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== WHAT WAS LEARNED ===================== -->
+    <h2>What JavaScript Concept Was Learned Today?</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        Factories, currying and memoization are not separate language features but three habits built on closures: a function that returns a customized function, a function that takes its arguments over several calls, and a function that keeps a private cache of earlier results. Each works because the returned function keeps the scope where it was created alive.
+      </p>
+      <p class="concern-relate" style="margin-bottom: 0;">
+        <strong>Relates to:</strong> ƒ Functions &amp; Abstraction (4 of 10) — how do we package and reuse computation? Here, by letting functions build, specialize and remember other functions.
+      </p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ===================== NEXT ===================== -->
+    <h2>Next</h2>
+    <div class="card">
+      <p style="margin-bottom: 0;">
+        All three patterns pass functions around as ordinary values. Lab 16 turns to the most common reason for doing so: handing a function to other code to call later — the callback.
+      </p>
+    </div>
+
+    <p style="margin-top:24px;" aria-label="Lab navigation">
+      <a href="../index.html">&larr; All labs</a>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>
